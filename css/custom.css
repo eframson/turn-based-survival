@@ -1,0 +1,136 @@
+/*$white: rgb(255,255,255);
+$off-white: rgba($white, 0.2);*/
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
+.loading {
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  border: 0.25rem solid rgba(255, 0, 0, 0.2);
+  border-top-color: #ff0000;
+  animation: spin 1s infinite linear; }
+
+body {
+  /*background-image: url('../img/silver_scales.png');
+  background-attachment: fixed;*/
+  /*background: #e3eada;*/ }
+
+button:focus {
+  outline: none !important; }
+
+#loading {
+  margin: auto; }
+
+.container {
+  padding-left: 0;
+  padding-right: 0; }
+
+.row {
+  /*margin-right: 15px;
+  margin-left: 15px;*/
+  margin-right: 0px;
+  margin-left: 0px; }
+
+.clear {
+  clear: both !important; }
+
+.no-left-padding {
+  padding-left: 0 !important; }
+
+.no-right-padding {
+  padding-right: 0 !important; }
+
+.with-left-padding {
+  padding-left: 15px !important; }
+
+.with-right-padding {
+  padding-right: 15px !important; }
+
+.leftcol, .rightcol, .centercol {
+  padding: 0px; }
+
+.leftcol, .rightcol {
+  margin-left: 0px;
+  margin-right: 0px; }
+
+.centercol {
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-left: 15px;
+  padding-right: 15px; }
+
+.no_right_padding {
+  padding-right: 0; }
+
+.ajax-notice {
+  display: none;
+  margin-bottom: 10px;
+  text-align: center; }
+
+.hidden {
+  display: none; }
+
+.modal {
+  position: absolute; }
+
+.modal-body {
+  overflow-y: scroll;
+  max-height: 500px; }
+
+.small {
+  font-size: 12px; }
+
+.growl {
+  opacity: 1.0;
+  filter: alpha(opacity=100);
+  min-width: 200px;
+  min-height: 75px; }
+
+.growl.growl-error {
+  background: #d9534f; }
+
+.growl.growl-notice {
+  background: #5cb85c; }
+
+.growl.growl-warning {
+  background: #f0ad4e; }
+
+.saved-notice {
+  display: block;
+  margin-top: 22px;
+  text-align: right;
+  font-weight: bold;
+  color: #5cb85c; }
+
+.main-content-row {
+  min-height: 200px; }
+
+.title-row button {
+  margin-top: 15px; }
+
+.title-row .faq-notice {
+  margin-top: 30px; }
+
+.header {
+  margin-right: 0px;
+  margin-left: 0px; }
+
+.header button {
+  margin-top: 20px; }
+
+.content-area {
+  margin-top: 10px; }
+
+.footer {
+  font-size: 10px;
+  font-style: italic;
+  margin-top: 15px;
+  margin-bottom: 15px; }
+
+.footer .footer-link {
+  cursor: pointer; }
+
+/*# sourceMappingURL=custom.css.map */
