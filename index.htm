@@ -73,8 +73,15 @@
 				<!-- end title + load/save -->
 
 				<!-- start stat row header row -->
-				<div class="row player-stat-row player-stats hidden">
-					<div class="col-md-1 with-left-padding"><span class="stat-label">Level</span><span class="stat-value " data-bind="text: player().level()"></span></div>
+				<div class="row player-stat-row game-stats hidden">
+
+					<div class="col-md-6"></div>
+					<div class="col-md-1"><span class="stat-label">Hour</span><span id="current-hour" class="stat-value"></span></div>
+					<div class="col-md-1"><span class="stat-label">Day</span><span id="current-day" class="stat-value"></span></div>
+					<div class="col-md-2"><span class="stat-label">Season</span><span id="current-season" class="stat-value"></span></div>
+					<div class="col-md-1"><span class="stat-label">Year</span><span id="current-year" class="stat-value"></span></div>
+					<div class="col-md-1"><span class="stat-label">Speed</span><span data-bind="text: playSpeed()" class="stat-value"></span></div>
+					<!--<div class="col-md-1 with-left-padding"><span class="stat-label">Level</span><span class="stat-value " data-bind="text: player().level()"></span></div>
 					<div class="col-md-1">
 						<span class="stat-label">HP</span>
 						<span class="stat-value hp-stat current-hp" data-bind="text: player().hp(), css: { 'low-hp' : player().isHpLow() }"></span>
@@ -85,19 +92,19 @@
 					<div class="col-md-1"><span class="stat-label">STR</span><span class="stat-value" data-bind="text: player().str()"></span></div>
 					<div class="col-md-1"><span class="stat-label">DEX</span><span class="stat-value" data-bind="text: player().dex()"></span></div>
 					<div class="col-md-1"><span class="stat-label">END</span><span class="stat-value" data-bind="text: player().end()"></span></div>
-					<div class="col-md-1"><span class="stat-label">SPD</span><span class="stat-value" data-bind="text: player().speed()"></span></div>
+					<div class="col-md-1"><span class="stat-label">SPD</span><span class="stat-value" data-bind="text: player().speed()"></span></div>-->
 
 
 					<!--<div class="col-md-1"><span class="stat-label"></span><span class="stat-value"></span></div>-->
 					<!--<div class="col-md-1"><span class="stat-label"></span><span class="stat-value"></span></div>-->
 
-					<div class="col-md-1">
+					<!--<div class="col-md-1">
 						<span class="stat-label">AP</span>
 						<span class="stat-value hp-stat current-hp" data-bind="text: player().ap(), css: { 'low-hp' : player().ap() == 0 }"></span>
 						<span class="stat-value hp-stat max-hp" data-bind="text: '/ ' + player().maxAp()"></span>
 					</div>
 					<div class="col-md-2"><span class="stat-label">EXP</span><span class="stat-value" data-bind="text: player().exp() + '/' + player().expRequiredForNextLevel()"></span></div>
-					<div class="col-md-1 with-right-padding"><span class="stat-label">GP</span><span class="stat-value" data-bind="text: player().gp()"></span></div>
+					<div class="col-md-1 with-right-padding"><span class="stat-label">GP</span><span class="stat-value" data-bind="text: player().gp()"></span></div>-->
 				</div>
 				<!-- end stat row header row -->
 			</div>
@@ -213,6 +220,8 @@
 		
 		<!-- Classes -->
 		<script src="js/classes/Game.js"></script>
+		<script src="js/classes/Person.js"></script>
+		<script src="js/classes/Settler.js"></script>
 
 		<!-- Init -->
 		<script src="js/main.js"></script>

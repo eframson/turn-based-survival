@@ -50,6 +50,10 @@ button:focus {
 	margin-left: 0px;
 }
 
+.hidden {
+	display: none;
+}
+
 .clear {
 	clear: both !important;
 }
@@ -70,6 +74,31 @@ button:focus {
 	padding-right: 15px !important;
 }
 
+.no_right_padding {
+	padding-right: 0;
+}
+
+.game-stats {
+
+	.stat-label, .stat-value {
+		width: 40px;
+		text-align: left;
+	}
+
+	.stat-label {
+		font-weight: bold;
+	}
+
+	.stat-value {
+		margin-left: 5px;
+	}
+
+	.col-md-1 {
+		padding: 0;
+		text-align: left;
+	}
+}
+
 .leftcol, .rightcol, .centercol {
 	padding: 0px;
 }
@@ -86,18 +115,10 @@ button:focus {
 	padding-right: 15px;
 }
 
-.no_right_padding {
-	padding-right: 0;
-}
-
 .ajax-notice {
 	display: none;
 	margin-bottom: 10px;
 	text-align: center;
-}
-
-.hidden {
-	display: none;
 }
 
 .modal {
