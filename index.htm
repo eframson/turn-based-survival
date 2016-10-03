@@ -39,10 +39,191 @@
 	</head>
 
 	<body>
+
+		<!-- start header area -->
+		<div class="header-area">
+
+			<!-- start bootstrap container -->
+			<div class="container">
+
+				<!-- start title + load/save -->
+				<div class="row title-row">
+					<div class="col-sm-3"><h2 class="title">TBD</h2></div>
+					<div class="col-sm-6"></div>
+					<div class="col-sm-1"><span class="saved-notice hidden">Saved!</span></div>
+					<div class="col-sm-1"><button type="button" class="save-load-controls btn btn-sm btn-default hidden load-button" data-bind="click: loadGame">Load</button></div>
+					<div class="col-sm-1"><button type="button" class="save-load-controls btn btn-sm btn-default hidden save-button" data-bind="click: saveGame">Save</button></div>
+				</div>
+				<!-- end title + load/save -->
+
+				<!-- start stat row header row -->
+				<div class="row game-stat-row hidden">
+
+					<div class="col-sm-6"></div>
+					<div class="col-sm-1"><span class="stat-label">Hour</span><span id="current-hour" class="stat-value"></span></div>
+					<div class="col-sm-1"><span class="stat-label">Day</span><span id="current-day" class="stat-value"></span></div>
+					<div class="col-sm-2"><span class="stat-label">Season</span><span id="current-season" class="stat-value"></span></div>
+					<div class="col-sm-1"><span class="stat-label">Year</span><span id="current-year" class="stat-value"></span></div>
+					<div class="col-sm-1"><span class="stat-label">Speed</span><span data-bind="text: playSpeed()" class="stat-value"></span></div>
+
+				</div>
+				<!-- end stat row header row -->
+
+			</div>
+			<!-- end bootstrap container -->
+
+		</div>
+		<!-- end header area -->
+
+		<!-- start body area -->
+		<div class="body-area">
+
+			<div id="loading" class="loading-indicator loading"></div>
+
+			<!-- start bootstrap container -->
+			<div class="container">
+
+				<!-- start one-column row -->
+				<div class="onecol-row row hidden">
+
+					<!-- spacer -->
+					<div class="col-sm-3"></div>
+					<!-- end spacer -->
+
+					<!-- start col-sm-12 -->
+					<div class="col-sm-6 content" id="fullscreen-content">
+
+						<!-- start newgame content -->
+						<div class="newgame-content" id="newgame-content">
+							<div class="buttons">
+								<button type="button" class="save-load-controls btn btn-md btn-default load-button" data-bind="click: loadGame">Load Game</button>
+								<button type="button" class="save-load-controls btn btn-md btn-default new-button" data-bind="click: newGame">New Game</button>
+							</div>
+						</div>
+						<!-- end newgame content -->
+
+						<!-- start intro sequence content -->
+						<div class="intro-content hidden" id="intro-content">
+							<div id="intro-s1-p1" class="hidden intro-text-paragraph">
+								Blew their wigs bright doghouse down with it drape early black final got your boots on guzzlin' foam hep cat kopasetic mash me a fin mellow melted out mess ofay out of the world pounders sounded off square take off timber wrong riff zoot trickeration trilly twister to the slammer whipped up.
+							</div>
+							<div id="intro-s1-p2" class="hidden intro-text-paragraph">
+								Blip capped come again crumb crushers down with it early black fine dinner hep cat icky jam jumped in port kick melted out meter nod sadder than a map sam got you solid to dribble unhep v-8 trickeration wrong riff.
+							</div>
+							<div id="intro-s1-p3" class="hidden intro-text-paragraph">
+								Beat cups dreamers early black hot joint is jumping lily whites line skins square to dribble togged to the bricks trickeration v-8. Cop creeps out like the shadow got your glasses.
+							</div>
+							<div id="intro-s1-buttons" class="hidden intro-buttons">
+								<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('p1'); }">Continue</button>
+								<div class="clear"></div>
+							</div>
+						</div>
+						<!-- end intro sequence content -->
+
+					</div>
+					<!-- end col-sm-12 -->
+
+					<!-- spacer -->
+					<div class="col-sm-3"></div>
+					<!-- end spacer -->
+
+				</div>
+				<!-- end one-column row -->
+
+				<!-- start three-column row -->
+				<div class="threecol-row row hidden">
+
+					<!-- start leftcol -->
+					<div class="col-sm-4 leftcol">
+
+						<!-- start leftcol-inner -->
+						<div class="leftcol-inner">
+
+						</div>
+						<!-- end leftcol-inner -->
+
+					</div>
+					<!-- end leftcol -->
+
+					<!-- start centercol -->
+					<div class="col-sm-4 centercol">
+
+						<div class="centercol-inner">
+
+						</div>
+
+					</div>
+					<!-- end centercol -->
+
+					<!-- start rightcol -->
+					<div class="col-sm-4 rightcol">
+
+						<div class="rightcol-inner">
+
+						</div>
+
+					</div>
+					<!-- end rightcol -->
+
+				</div>
+				<!-- end three-column row -->
+
+			</div>
+			<!-- end bootstrap container -->
+
+		</div>
+		<!-- end body area -->
+
+		<!-- start message log area -->
+		<div class="log-area hidden">
+			<!-- start bootstrap container -->
+			<div class="container">
+				<!-- start message log row -->
+				<div class="row log-row">
+					<div class="col-sm-12">
+						<div class="message-log" data-bind="foreach: logMessages()">
+							<p data-bind="html: $data.text, css: $data.cssClass"></p>
+						</div>
+					</div>
+				</div>
+				<!-- end message log row -->
+			</div>
+			<!-- end bootstrap container -->
+		</div>
+		<!-- end message log area -->
+
+		<!-- start footer area -->
+		<div class="footer-area">
+			<!-- start bootstrap container -->
+			<div class="container">
+				<!-- start footer row -->
+				<div class="row footer">
+					<div class="col-sm-4">
+						<span class="copyright">Copyright 2016 Emmett Framson under <a href="http://www.perlfoundation.org/artistic_license_2_0" target="_blank">The Artistic License 2.0</a></span>
+					</div>
+					<div class="col-sm-1"></div>
+					<div class="col-sm-1"><a class="footer-link" role="button" data-bind="click: showFaq">Help/FAQ</a></div>
+					<div class="col-sm-2"></div>
+					<div class="col-sm-4">
+						<span class="feedback">Bugs/feedback welcomed at framsone at gmail dot com</span>
+					</div>
+				</div>
+				<!-- end footer row -->
+			</div>
+			<!-- end bootstrap container -->
+		</div>
+		<!-- end footer area -->
+
+		<!-- item list template -->
+		<script type="text/html" id="item-list-template">
+		</script>
+		<!-- end item list template -->
+
+		<!-- start modal area -->
 		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		  <div class="modal-dialog">
 
-		    <div class="modal-content massupdate">
+		    <div class="modal-content">
 			    <div class="modal-header">
 			        <button type="button" class="close" data-bind="click: hideModal, visible: showModalClose"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 			        <h4 class="modal-title" data-bind="text: modalWindowTitle"></h4>
@@ -56,138 +237,8 @@
 
 		  </div>
 		</div>
+		<!-- end modal area -->
 
-		<div class="container">
-
-			<!-- start main header area -->
-			<div class="header-area">
-
-				<!-- start title + load/save -->
-				<div class="row title-row">
-					<div class="col-md-3 no-left-padding"><h2 class="title">TBD</h2></div>
-					<div class="col-md-6 no-left-padding"></div>
-					<div class="col-md-1 no-right-padding"><span class="saved-notice hidden">Saved!</span></div>
-					<div class="col-md-1"><button type="button" class="save-load-controls btn btn-default hidden" data-bind="click: loadGame">Load</button></div>
-					<div class="col-md-1 no-right-padding"><button type="button" class="save-load-controls btn btn-default hidden" data-bind="click: saveGame">Save</button></div>
-				</div>
-				<!-- end title + load/save -->
-
-				<!-- start stat row header row -->
-				<div class="row player-stat-row game-stats hidden">
-
-					<div class="col-md-6"></div>
-					<div class="col-md-1"><span class="stat-label">Hour</span><span id="current-hour" class="stat-value"></span></div>
-					<div class="col-md-1"><span class="stat-label">Day</span><span id="current-day" class="stat-value"></span></div>
-					<div class="col-md-2"><span class="stat-label">Season</span><span id="current-season" class="stat-value"></span></div>
-					<div class="col-md-1"><span class="stat-label">Year</span><span id="current-year" class="stat-value"></span></div>
-					<div class="col-md-1"><span class="stat-label">Speed</span><span data-bind="text: playSpeed()" class="stat-value"></span></div>
-					<!--<div class="col-md-1 with-left-padding"><span class="stat-label">Level</span><span class="stat-value " data-bind="text: player().level()"></span></div>
-					<div class="col-md-1">
-						<span class="stat-label">HP</span>
-						<span class="stat-value hp-stat current-hp" data-bind="text: player().hp(), css: { 'low-hp' : player().isHpLow() }"></span>
-						<span class="stat-value hp-stat max-hp" data-bind="text: '/ ' + player().maxHp()"></span>
-					</div>
-					<div class="col-md-1"><span class="stat-label">AC</span><span class="stat-value" data-bind="text: player().totalArmor()"></span></div>
-					<div class="col-md-1"><span class="stat-label">DMG</span><span class="stat-value" data-bind="text: player().minDmg() + ' - ' + player().maxDmg() + ( player().bonusDmg() > 0 ? ' (+' + player().bonusDmg() + ')' : '' )"></span></div>
-					<div class="col-md-1"><span class="stat-label">STR</span><span class="stat-value" data-bind="text: player().str()"></span></div>
-					<div class="col-md-1"><span class="stat-label">DEX</span><span class="stat-value" data-bind="text: player().dex()"></span></div>
-					<div class="col-md-1"><span class="stat-label">END</span><span class="stat-value" data-bind="text: player().end()"></span></div>
-					<div class="col-md-1"><span class="stat-label">SPD</span><span class="stat-value" data-bind="text: player().speed()"></span></div>-->
-
-
-					<!--<div class="col-md-1"><span class="stat-label"></span><span class="stat-value"></span></div>-->
-					<!--<div class="col-md-1"><span class="stat-label"></span><span class="stat-value"></span></div>-->
-
-					<!--<div class="col-md-1">
-						<span class="stat-label">AP</span>
-						<span class="stat-value hp-stat current-hp" data-bind="text: player().ap(), css: { 'low-hp' : player().ap() == 0 }"></span>
-						<span class="stat-value hp-stat max-hp" data-bind="text: '/ ' + player().maxAp()"></span>
-					</div>
-					<div class="col-md-2"><span class="stat-label">EXP</span><span class="stat-value" data-bind="text: player().exp() + '/' + player().expRequiredForNextLevel()"></span></div>
-					<div class="col-md-1 with-right-padding"><span class="stat-label">GP</span><span class="stat-value" data-bind="text: player().gp()"></span></div>-->
-				</div>
-				<!-- end stat row header row -->
-			</div>
-			<!-- end main header area -->
-
-			<!-- start main content area -->
-			<div class="content-area">
-
-				<!--<div id="loading" class="loading-indicator"><img src="img/ajax-loader.svg" /></div>-->
-				<div id="loading" class="loading-indicator loading"></div>
-
-				<!-- start main row -->
-				<div class="main-content-row row hidden">
-
-					<!-- start leftcol -->
-					<div class="col-md-4 leftcol">
-
-						<!-- start leftcol-inner -->
-						<div class="leftcol-inner">
-
-						</div>
-						<!-- end leftcol-inner -->
-
-					</div>
-					<!-- end leftcol -->
-
-					<!-- start centercol -->
-					<div class="col-md-4 centercol">
-
-						<div class="centercol-inner">
-
-						</div>
-
-					</div>
-					<!-- end centercol -->
-
-					<!-- start rightcol -->
-					<div class="col-md-4 rightcol">
-
-						<div class="rightcol-inner">
-
-						</div>
-
-					</div>
-					<!-- end rightcol -->
-
-				</div>
-				<!-- end main row -->
-
-			</div>
-			<!-- end main content area -->
-
-			<!-- item list template -->
-			<script type="text/html" id="item-list-template">
-			</script>
-			<!-- end item list template -->
-
-			<!-- start message log area -->
-			<div class="log-area hidden">
-				<div class="row log-row">
-					<div class="col-md-12">
-						<div class="message-log" data-bind="foreach: logMessages()">
-							<p data-bind="html: $data.text, css: $data.cssClass"></p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- end message log area -->
-
-			<!-- start footer row -->
-			<div class="row footer">
-				<div class="col-md-4">
-					<span class="copyright">Copyright 2016 Emmett Framson under <a href="http://www.perlfoundation.org/artistic_license_2_0" target="_blank">The Artistic License 2.0</a></span>
-				</div>
-				<div class="col-md-1"></div>
-				<div class="col-md-1"><a class="footer-link" role="button" data-bind="click: showFaq">Help/FAQ</a></div>
-				<div class="col-md-2"></div>
-				<div class="col-md-4">
-					<span class="feedback">Bugs/feedback welcomed at framsone at gmail dot com</span>
-				</div>
-			</div>
-			<!-- end footer row -->
-		</div> <!-- end container -->
 
 		<!-- Bootstrap core JavaScript
 		================================================== -->

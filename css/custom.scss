@@ -1,10 +1,10 @@
-$base-line-height: 48px;
-$white: #ff0000;
-$off-white: rgba($white, 0.2);
-/*$white: rgb(255,255,255);
-$off-white: rgba($white, 0.2);*/
-$spin-duration: 1s;
+/* Start variable declaration area */
 
+/* Loading spinner */
+$loader-dimensions: 48px;
+$loader-color: #ff0000;
+
+/* Animation style */
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -14,40 +14,11 @@ $spin-duration: 1s;
   }
 }
 
-.loading {
-    border-radius: 50%;
-    width: $base-line-height;
-    height: $base-line-height;
-    border: .25rem solid $off-white;
-    border-top-color: $white;
-    animation: spin $spin-duration infinite linear;
-}
+/* End variable declaration area */
 
-
-body {
-	/*background-image: url('../img/silver_scales.png');
-	background-attachment: fixed;*/
-	/*background: #e3eada;*/
-}
-
+/* General styles */
 button:focus {
 	outline: none !important;
-}
-
-#loading {
-	margin: auto;
-}
-
-.container {
-	padding-left: 0;
-	padding-right: 0;
-}
-
-.row {
-	/*margin-right: 15px;
-	margin-left: 15px;*/
-	margin-right: 0px;
-	margin-left: 0px;
 }
 
 .hidden {
@@ -78,49 +49,126 @@ button:focus {
 	padding-right: 0;
 }
 
-.game-stats {
+.small {
+	font-size: 12px;
+}
 
-	.stat-label, .stat-value {
-		width: 40px;
-		text-align: left;
+.white-gradient-with-transparency {
+	background: -moz-linear-gradient(left,  rgba(255,255,255,0) 0%, rgba(255,255,255,1) 7%, rgba(255,255,255,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 7%,rgba(255,255,255,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to right,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 7%,rgba(255,255,255,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+}
+
+/* End general styles */
+
+/* Header styles */
+.header-area {
+
+	.game-stat-row {
+
+		.stat-label, .stat-value {
+			width: 40px;
+			text-align: left;
+		}
+
+		.stat-label {
+			font-weight: bold;
+		}
+
+		.stat-value {
+			margin-left: 5px;
+		}
+
 	}
 
-	.stat-label {
-		font-weight: bold;
+	.title-row {
+	
+		button {
+			margin-top: 20px;
+		}
+
+		.faq-notice {
+			margin-top: 30px;
+		}
+
+		.saved-notice{
+			display: block;
+			margin-top: 22px;
+			text-align: right;
+			font-weight: bold;
+			color: #5cb85c;
+		}
+
 	}
 
-	.stat-value {
-		margin-left: 5px;
+}
+/* End header styles */
+
+/* Body styles */
+.body-area {
+
+	.loading {
+	    border-radius: 50%;
+	    width: $loader-dimensions;
+	    height: $loader-dimensions;
+	    border: .25rem solid rgba($loader-color, 0.2);
+	    border-top-color: $loader-color;
+	    animation: spin 1s infinite linear;
+	    margin: auto;
 	}
 
-	.col-md-1 {
-		padding: 0;
-		text-align: left;
+	.onecol-row {
+
+		#fullscreen-content {
+
+			min-height: 400px;
+
+			.newgame-content {
+
+				.buttons {
+					width: 200px;
+					margin: auto;
+				}
+
+			}
+
+			.intro-content {
+
+				.intro-text-paragraph {
+					margin-bottom: 10px;
+				}
+
+				#intro-s1-buttons button {
+					float: right;
+				}
+
+			}
+
+		}
+
+	}
+
+	.threecol-row {
+		min-height: 200px;
+	}
+
+}
+/* End body styles */
+
+/* Footer styles */
+.footer-area {
+	font-size: 10px;
+	font-style: italic;
+	margin-top: 15px;
+	margin-bottom: 15px;
+
+	.footer-link {
+		cursor: pointer;
 	}
 }
+/* End footer styles */
 
-.leftcol, .rightcol, .centercol {
-	padding: 0px;
-}
-
-.leftcol, .rightcol {
-	margin-left: 0px;
-	margin-right: 0px;
-}
-
-.centercol {
-	margin-left: 0px;
-	margin-right: 0px;
-	padding-left: 15px;
-	padding-right: 15px;
-}
-
-.ajax-notice {
-	display: none;
-	margin-bottom: 10px;
-	text-align: center;
-}
-
+/* Modal styles */
 .modal {
 	position: absolute;
 }
@@ -129,10 +177,11 @@ button:focus {
 	overflow-y: scroll;
 	max-height: 500px;
 }
-.small {
-	font-size: 12px;
-}
+/* End modal styles */
 
+
+/* Unused/leftover/reference styles */
+/*
 .growl {
 	opacity: 1.0;
 	filter: alpha(opacity=100);
@@ -151,47 +200,4 @@ button:focus {
 .growl.growl-warning {
 	background: #f0ad4e;
 }
-
-.saved-notice{
-	display: block;
-	margin-top: 22px;
-	text-align: right;
-	font-weight: bold;
-	color: #5cb85c;
-}
-
-.main-content-row {
-	min-height: 200px;
-}
-
-.title-row button {
-	margin-top: 15px;
-}
-
-.title-row .faq-notice {
-	margin-top: 30px;
-}
-
-.header {
-	margin-right: 0px;
-	margin-left: 0px;
-}
-
-.header button {
-	margin-top: 20px;
-}
-
-.content-area {
-	margin-top: 10px;
-}
-
-.footer {
-	font-size: 10px;
-	font-style: italic;
-	margin-top: 15px;
-	margin-bottom: 15px;
-}
-
-.footer .footer-link {
-	cursor: pointer;
-}
+*/
