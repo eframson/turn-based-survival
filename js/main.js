@@ -29,3 +29,8 @@ $(document).ready(function(){
 });
 
 //http://usejsdoc.org/about-getting-started.html
+
+/*
+- Simulate birth/death rates
+
+*/
