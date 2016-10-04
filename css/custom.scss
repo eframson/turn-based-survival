@@ -144,6 +144,25 @@ button:focus {
 
 			}
 
+			.map-rendering {
+
+				.map-row {
+
+					margin: 0;
+
+					.map-cell {
+						float: left;
+						margin: 0;
+						/*width: 4px;
+						height: 4px;*/
+						width: 8px;
+						height: 8px;
+					}
+
+				}
+
+			}
+
 		}
 
 	}

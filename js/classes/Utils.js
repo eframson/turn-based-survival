@@ -86,7 +86,7 @@ Utils.prototype.doBasedOnPercent = function(percentageActions, finallyAction){
 	return false;
 }
 
-Utils.prototype.chooseRandomly = function(opts){
-	var randIdx = this.doRand(0, opts.length);
-	return opts[randIdx];	
+Utils.prototype.chooseRandomly = function(optArray){
+	var randIdx = this.doRand(0, optArray.length);
+	return optArray[randIdx];	
 }

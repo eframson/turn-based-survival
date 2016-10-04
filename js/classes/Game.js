@@ -66,6 +66,7 @@ Game.prototype.init = function(data){
 	this.oldSettlers = ko.observable( $Utils.setDefaultValue(data.oldSettlers, 1) );
 	this.resources = ko.observable(data.resources || this._getDefaultResources());
 	this.playSpeed = ko.observable(1);
+	this.mapArray = ko.observable([]);
 
 	//Computed
 	this.totalSettlers = ko.computed(function(){
@@ -438,7 +439,9 @@ Game.prototype.revealText = function(targetElemOrSelector, revealSpeed, waitInSe
 		waitInSecondsBeforeReturning = waitInSecondsBeforeReturning || 0;
 
 		var origPosition = targetElemOrSelector.css("position");
+		var origOverflow = targetElemOrSelector.css("overflow");
 		targetElemOrSelector.css("position", "relative");
+		targetElemOrSelector.css("overflow", "hidden");
 
 		var overlayDiv = $('<div></div>').css({
 			position : 'absolute',
@@ -452,6 +455,7 @@ Game.prototype.revealText = function(targetElemOrSelector, revealSpeed, waitInSe
 			
 			overlayDiv.remove();
 			targetElemOrSelector.css("position", origPosition);
+			targetElemOrSelector.css("overflow", origOverflow);
 
 			setTimeout(function(){
 				resolve();
@@ -466,6 +470,278 @@ Game.prototype.revealText = function(targetElemOrSelector, revealSpeed, waitInSe
 }
 
 //End utility functions
+
+//Start map functions
+
+Game.prototype.generateHeightMapUsingParticleDepositionAlgorithm = function(options){
+
+	//var map = game.generateHeightMapUsingParticleDepositionAlgorithm({width : 50, height : 50, numberOfDropPoints : 100, minParticlesPerPoint : 3, maxParticlesPerPoint : 3, numPasses : 1, minRadiusToLookForLowerNeighbors : 1, maxRadiusToLookForLowerNeighbors : 5, dontRepeatPoints : 1, numBlurPasses : 3});
+
+	options = options || {};
+
+	var width = options.width || 100;
+	var height = options.height || 100;
+	var numberOfDropPoints = options.numberOfDropPoints || 10;
+	var minParticlesPerPoint = options.minParticlesPerPoint || 1;
+	var maxParticlesPerPoint = options.maxParticlesPerPoint || 5;
+	var numPasses = options.numPasses || 1;
+	var minRadiusToLookForLowerNeighbors = options.minRadiusToLookForLowerNeighbors || 1;
+	var maxRadiusToLookForLowerNeighbors = options.maxRadiusToLookForLowerNeighbors || 1;
+	var dontRepeatPoints = options.dontRepeatPoints || 0;
+	var numBlurPasses = $Utils.setDefaultValue(options.numBlurPasses, 1);
+
+	var mapArray = [];
+	var pickedPoints = {};
+
+	//Initialize the grid structure
+	for (var h = 0; h < height; h++) {
+		if( mapArray[h] == undefined ){
+			mapArray[h] = [];
+		}
+		for (var w = 0; w < width; w++) {
+			mapArray[h][w] = 0;
+		}
+	}
+
+	for(var pass = 0; pass < numPasses; pass++){
+
+		for(var d = 0; d < numberOfDropPoints; d++){
+
+			//Don't pick any edge points (doRand upper bounds is exclusive, so it doesn't need anything special)
+			var randY = $Utils.doRand(1, height);
+			var randX = $Utils.doRand(1, width);
+
+			//Avoid an "undefined" error
+			if(pickedPoints[randY] == undefined){
+				pickedPoints[randY] = {};
+			}
+
+			while(dontRepeatPoints && pickedPoints[randY][randX] == 1){
+
+				randY = $Utils.doRand(1, height);
+				randX = $Utils.doRand(1, width);
+
+				//Avoid an "undefined" error
+				if(pickedPoints[randY] == undefined){
+					pickedPoints[randY] = {};
+				}
+			}
+			if(dontRepeatPoints){
+				pickedPoints[randY][randX] = 1;
+			}
+
+			var numParticlesToDrop = $Utils.doRand(minParticlesPerPoint, maxParticlesPerPoint + 1);
+			for(var p = 0; p < numberOfDropPoints; p++){
+
+				mapArray[randY][randX]+=1;
+
+				var radiusToLookForLowerNeighbors = $Utils.doRand(minRadiusToLookForLowerNeighbors, maxRadiusToLookForLowerNeighbors + 1);
+
+				var lowestPointNeighbor = this._getLowestPointNeighbor(randY, randX, radiusToLookForLowerNeighbors, height, width, mapArray);
+
+				if(mapArray[randY][randX] - lowestPointNeighbor.z > 1){
+					mapArray[randY][randX]-=1;
+					mapArray[lowestPointNeighbor.y][lowestPointNeighbor.x]+=1;
+				}
+			}
+		}
+	}
+
+	//console.log("Before blur");
+	//this._TESTLOGMAP(mapArray);
+
+	if(numBlurPasses > 0){
+
+		mapArray = this._applyBlurToMap(numBlurPasses, mapArray);
+
+		//console.log("After blurring is done");
+		//this._TESTLOGMAP(mapArray);
+
+	}
+	this.mapArray(this._translateHeightsIntoColorsForArray(mapArray));
+	return mapArray;
+}
+
+Game.prototype._getLowestPointNeighbor = function(h, w, radius, mapHeight, mapWidth, mapArray){
+	
+	var northBounds = (h - radius < 0) ? 0 : h - radius ;
+	var southBounds = (h + radius > mapHeight) ? mapHeight - 1 : h + radius ;
+
+	var westBounds = (w - radius < 0) ? 0 : w - radius ;
+	var eastBounds = (w + radius > mapWidth) ? mapWidth - 1 : w + radius ;
+
+	var neighborsIndexedByHeight = {};
+
+	//Grab the in-bounds squares and index them by height
+	for (var y = northBounds; y < southBounds; y++) {
+		for (var x = westBounds; x < eastBounds; x++) {
+			
+			var z = mapArray[y][x];
+
+			if( neighborsIndexedByHeight[z] == undefined ){
+				neighborsIndexedByHeight[z] = [];
+			}
+
+			neighborsIndexedByHeight[z].push({x : x, y : y, z : z});
+		}
+	}
+
+	var sortedHeights = Object.keys(neighborsIndexedByHeight).sort();
+	var lowestHeight = sortedHeights[0];
+
+	return $Utils.chooseRandomly(neighborsIndexedByHeight[lowestHeight]);
+
+}
+
+Game.prototype._applyBlurToMap = function(numBlurPasses, mapArray){
+
+	var newArray = [];
+	var intermediateArray = [];
+	var oneDimensionalKernel1 = [ 0.06136, 0.24477, 0.38774, 0.24477, 0.06136 ];
+	var oneDimensionalKernel2 = [ 0.006, 0.061, 0.242, 0.383, 0.242, 0.061, 0.006 ];
+
+	var kernelToUse = oneDimensionalKernel2;
+	var centerOfKernel = Math.round(kernelToUse.length / 2) - 1;
+
+	var outputValue = 0;
+	var offsetOfCurrentSquare;
+	var horizIdx;
+	var vertIdx;
+
+	var arrayToBlur;
+
+	for(var b = 0; b < numBlurPasses; b++){
+
+		arrayToBlur = (newArray.length == 0) ? mapArray : newArray ;
+
+		//Horizontal pass
+		for(var hy = 0; hy < arrayToBlur.length; hy++){
+
+			for(var hx = 0; hx < arrayToBlur[hy].length; hx++){
+
+				outputValue = 0;				
+
+				for(var k = 0; k < kernelToUse.length; k++){
+
+					offsetOfCurrentSquare = k - centerOfKernel;
+					horizIdx = (hx + offsetOfCurrentSquare);
+					horizIdx = (horizIdx < 0) ? 0 : horizIdx ;
+					horizIdx = (horizIdx > (arrayToBlur[hy].length - 1)) ? arrayToBlur[hy].length - 1 : horizIdx ;
+					
+					outputValue += (arrayToBlur[hy][horizIdx] * kernelToUse[k]);
+				}
+
+				//Put the new value in the intermediate array
+				if( intermediateArray[hy] == undefined ){
+					intermediateArray[hy] = [];
+				}
+				intermediateArray[hy][hx] = Math.ceil(outputValue);
+
+			}
+
+		}
+
+		//Vertical pass
+		for(var vy = 0; vy < intermediateArray.length; vy++){
+
+			for(var vx = 0; vx < intermediateArray[vy].length; vx++){
+
+				outputValue = 0;
+
+				for(k = 0; k < kernelToUse.length; k++){
+
+					offsetOfCurrentSquare = k - centerOfKernel;
+					vertIdx = (vy + offsetOfCurrentSquare);
+					vertIdx = (vertIdx < 0) ? 0 : vertIdx ;
+					vertIdx = (vertIdx > (intermediateArray.length - 1)) ? intermediateArray.length - 1 : vertIdx ;
+					
+					outputValue += (intermediateArray[vertIdx][vx] * kernelToUse[k]);
+				}
+
+				//Put the new value in the intermediate array
+				if( newArray[vy] == undefined ){
+					newArray[vy] = [];
+				}
+				newArray[vy][vx] = Math.ceil(outputValue);
+
+			}
+
+		}
+	}
+
+	return newArray;
+
+}
+
+Game.prototype._translateHeightsIntoColorsForArray = function(mapArray){
+
+	var colorArray = [];
+	var heightVal;
+	var color;
+
+	var colorKey = {
+		/*0 : "#330044",
+		1 : "#220066",
+		2 : "#1133cc",
+		3 : "#33dd00",
+		4 : "#ffda21",
+		5 : "#ff6622",
+		6 : "#d10000",*/
+
+		/*5 : "#220066",
+		6 : "#1133cc",
+		7 : "#33dd00",
+		8 : "#ffda21",
+		9 : "#ff6622",
+		10 : "#d10000",*/
+
+		6 : "#0004E3", //blue
+		7 : "#D0E300", //yellow
+		8 : "#56C656", //l green
+		9 : "#0a9000", //d green
+		10 : "#8C8C8C", //gray
+		11 : "#8C8C8C", //gray
+	};
+
+	/*var k = 0;
+	for(var i = 10; i < 255; i+=10){
+		var hexVal = i.toString(16);
+		colorKey[k] = "#" + hexVal + hexVal + hexVal;
+		k++;
+	}*/
+
+	for (var h = 0; h < mapArray.length; h++) {
+		for (var w = 0; w < mapArray[h].length; w++) {
+			heightVal = mapArray[h][w];
+
+			//color = (colorKey[heightVal] != undefined) ? colorKey[heightVal] : "#ffffff" ;
+
+			if(heightVal < 6){
+				//color = "#0004E3";
+				color = "#0005af";
+			}else if(heightVal > 11){
+				color = "#f7f7f7";
+			}else{
+				color = colorKey[heightVal];
+			}
+			
+			if( colorArray[h] == undefined ){
+				colorArray[h] = [];
+			}
+
+			colorArray[h][w] = { color : color, height : heightVal };
+		}
+	}
+	return colorArray;
+}
+
+Game.prototype._TESTLOGMAP = function(mapArray){
+	for (var h = 0; h < mapArray.length; h++) {
+		console.log(mapArray[h].join(" "));
+	}
+}
+
+//End map functions
 
 Game.prototype.gameOver = function(){
 	console.log('No settlers left.');

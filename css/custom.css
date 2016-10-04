@@ -82,6 +82,15 @@ button:focus {
     margin-bottom: 10px; }
   .body-area .onecol-row #fullscreen-content .intro-content #intro-s1-buttons button {
     float: right; }
+  .body-area .onecol-row #fullscreen-content .map-rendering .map-row {
+    margin: 0; }
+    .body-area .onecol-row #fullscreen-content .map-rendering .map-row .map-cell {
+      float: left;
+      margin: 0;
+      /*width: 4px;
+      height: 4px;*/
+      width: 8px;
+      height: 8px; }
 .body-area .threecol-row {
   min-height: 200px; }
 

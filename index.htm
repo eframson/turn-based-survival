@@ -94,7 +94,7 @@
 					<div class="col-sm-6 content" id="fullscreen-content">
 
 						<!-- start newgame content -->
-						<div class="newgame-content" id="newgame-content">
+						<div class="newgame-content hidden" id="newgame-content">
 							<div class="buttons">
 								<button type="button" class="save-load-controls btn btn-md btn-default load-button" data-bind="click: loadGame">Load Game</button>
 								<button type="button" class="save-load-controls btn btn-md btn-default new-button" data-bind="click: newGame">New Game</button>
@@ -119,6 +119,19 @@
 							</div>
 						</div>
 						<!-- end intro sequence content -->
+
+						<!-- start (temporarily located) map content -->
+						<div class="map-rendering" id="map-rendering">
+							<!-- ko foreach: mapArray -->
+							<div class="map-row">
+								<!-- ko foreach: $data -->
+									<div class="map-cell" data-bind="style : {backgroundColor : $data.color}, attr : {'data-height' : $data.height} "></div>
+								<!-- /ko -->
+								<div class="clear"></div>
+							</div>
+							<!-- /ko -->
+						</div>
+						<!-- end (temporarily located) map content -->
 
 					</div>
 					<!-- end col-sm-12 -->
@@ -265,6 +278,7 @@
 		<script src="js/lib/jquery-ui.min.js"></script>
 		<script src="js/lib/bootstrap.min.js"></script>
 		<script src="js/lib/knockout-3.4.0.min.js"></script>
+		<!--<script src="js/lib/knockout-3.4.0.js"></script>-->
 		<!-- Plugins -->
 		<script src="js/plugins/knockout-mapping-2.4.1.min.js"></script>
 		<script src="js/plugins/jquery.animateNumbers.js"></script>
