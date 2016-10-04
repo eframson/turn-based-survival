@@ -481,11 +481,11 @@ Game.prototype.newGame = function() {
 		300,
 		300
 	).then(function(){
-		return self.revealText("#intro-s1-p1", 2000, 1000);
+		return self.revealText("#intro-s1-p1", 3000, 1000);
 	}).then(function(){
-		return self.revealText("#intro-s1-p2", 2000, 1000);
+		return self.revealText("#intro-s1-p2", 3000, 1000);
 	}).then(function(){
-		return self.revealText("#intro-s1-p3", 2000, 1000);
+		return self.revealText("#intro-s1-p3", 3000, 1000);
 	}).then(function(){
 		$("#intro-s1-buttons").fadeIn(500);
 	});
