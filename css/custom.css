@@ -87,10 +87,16 @@ button:focus {
     .body-area .onecol-row #fullscreen-content .map-rendering .map-row .map-cell {
       float: left;
       margin: 0;
-      /*width: 4px;
-      height: 4px;*/
+      width: 2px;
+      height: 2px;
+      /*
+      width: 4px;
+      height: 4px;
+      */
+      /*
       width: 8px;
-      height: 8px; }
+      height: 8px;
+      */ }
 .body-area .threecol-row {
   min-height: 200px; }
 

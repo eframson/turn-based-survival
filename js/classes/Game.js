@@ -475,7 +475,7 @@ Game.prototype.revealText = function(targetElemOrSelector, revealSpeed, waitInSe
 
 Game.prototype.generateHeightMapUsingParticleDepositionAlgorithm = function(options){
 
-	//var map = game.generateHeightMapUsingParticleDepositionAlgorithm({width : 50, height : 50, numberOfDropPoints : 100, minParticlesPerPoint : 3, maxParticlesPerPoint : 3, numPasses : 1, minRadiusToLookForLowerNeighbors : 1, maxRadiusToLookForLowerNeighbors : 5, dontRepeatPoints : 1, numBlurPasses : 3});
+	//var map = game.generateHeightMapUsingParticleDepositionAlgorithm({width : 50, height : 50, numberOfDropPoints : 10, minParticlesPerPoint : 1, maxParticlesPerPoint : 1, numPasses : 10, minRadiusToLookForLowerNeighbors : 1, maxRadiusToLookForLowerNeighbors : 1, numBlurPasses : 2});
 
 	options = options || {};
 
@@ -489,9 +489,12 @@ Game.prototype.generateHeightMapUsingParticleDepositionAlgorithm = function(opti
 	var maxRadiusToLookForLowerNeighbors = options.maxRadiusToLookForLowerNeighbors || 1;
 	var dontRepeatPoints = options.dontRepeatPoints || 0;
 	var numBlurPasses = $Utils.setDefaultValue(options.numBlurPasses, 1);
+	var moveTowardsCenterOnSuccessivePasses = $Utils.setDefaultValue(options.moveTowardsCenterOnSuccessivePasses, 1);
+	var edgePadding = $Utils.setDefaultValue(options.edgePadding, 1);
 
 	var mapArray = [];
 	var pickedPoints = {};
+	var randX, randY;
 
 	//Initialize the grid structure
 	for (var h = 0; h < height; h++) {
@@ -505,11 +508,44 @@ Game.prototype.generateHeightMapUsingParticleDepositionAlgorithm = function(opti
 
 	for(var pass = 0; pass < numPasses; pass++){
 
+		//Don't pick any points on the edge or near the edge (want to try and get some more water on the edges of the map)
+		var northBounds = 1 + edgePadding;
+		var southBounds = height - edgePadding;
+		var westBounds = 1 + edgePadding;
+		var eastBounds = width - edgePadding;
+
+		if(moveTowardsCenterOnSuccessivePasses){
+
+			var centerOfMapX = Math.round(width / 2);
+			var centerOfMapY = Math.round(height / 2);
+			//Assuming maps are square, so just pick a bounds and roll with it
+			var radius = Math.round(width * 0.25);
+
+			//Just assume we won't run into any bounds issues so let's not waste time checking
+			var innerNorthBounds = centerOfMapY - radius;
+			var innerSouthBounds = centerOfMapY + radius;
+
+			var innerWestBounds = centerOfMapX - radius;
+			var innerEastBounds = centerOfMapX + radius;
+
+			//Start moving concentrically inward
+			northBounds+=pass;
+			southBounds-=pass;
+			westBounds+=pass;
+			eastBounds-=pass;
+
+			//Make sure we don't move too far inward (don't want to concentrate all particle drops on a tiny--or negative!--area)
+			northBounds = (northBounds > innerNorthBounds) ? innerNorthBounds : northBounds ;
+			southBounds = (southBounds < innerSouthBounds) ? innerSouthBounds : southBounds ;
+			westBounds = (westBounds > innerWestBounds) ? innerWestBounds : westBounds ;
+			eastBounds = (eastBounds < innerEastBounds) ? innerEastBounds : eastBounds ;
+
+		}
+
 		for(var d = 0; d < numberOfDropPoints; d++){
 
-			//Don't pick any edge points (doRand upper bounds is exclusive, so it doesn't need anything special)
-			var randY = $Utils.doRand(1, height);
-			var randX = $Utils.doRand(1, width);
+			randY = $Utils.doRand( northBounds, southBounds );
+			randX = $Utils.doRand( westBounds, eastBounds );
 
 			//Avoid an "undefined" error
 			if(pickedPoints[randY] == undefined){
@@ -518,13 +554,14 @@ Game.prototype.generateHeightMapUsingParticleDepositionAlgorithm = function(opti
 
 			while(dontRepeatPoints && pickedPoints[randY][randX] == 1){
 
-				randY = $Utils.doRand(1, height);
-				randX = $Utils.doRand(1, width);
+				randY = $Utils.doRand( northBounds, southBounds );
+				randX = $Utils.doRand( westBounds, eastBounds );
 
 				//Avoid an "undefined" error
 				if(pickedPoints[randY] == undefined){
 					pickedPoints[randY] = {};
 				}
+
 			}
 			if(dontRepeatPoints){
 				pickedPoints[randY][randX] = 1;
@@ -547,18 +584,15 @@ Game.prototype.generateHeightMapUsingParticleDepositionAlgorithm = function(opti
 		}
 	}
 
-	//console.log("Before blur");
-	//this._TESTLOGMAP(mapArray);
-
 	if(numBlurPasses > 0){
 
 		mapArray = this._applyBlurToMap(numBlurPasses, mapArray);
 
-		//console.log("After blurring is done");
-		//this._TESTLOGMAP(mapArray);
-
 	}
-	this.mapArray(this._translateHeightsIntoColorsForArray(mapArray));
+
+	//var terrainArray = this.translateHeightsIntoTerrain(mapArray);
+	this.mapArray(this._translateHeightsIntoColorsForArray(mapArray, 5));
+
 	return mapArray;
 }
 
@@ -600,7 +634,7 @@ Game.prototype._applyBlurToMap = function(numBlurPasses, mapArray){
 	var oneDimensionalKernel1 = [ 0.06136, 0.24477, 0.38774, 0.24477, 0.06136 ];
 	var oneDimensionalKernel2 = [ 0.006, 0.061, 0.242, 0.383, 0.242, 0.061, 0.006 ];
 
-	var kernelToUse = oneDimensionalKernel2;
+	var kernelToUse = oneDimensionalKernel1;
 	var centerOfKernel = Math.round(kernelToUse.length / 2) - 1;
 
 	var outputValue = 0;
@@ -673,57 +707,101 @@ Game.prototype._applyBlurToMap = function(numBlurPasses, mapArray){
 
 }
 
-Game.prototype._translateHeightsIntoColorsForArray = function(mapArray){
+Game.prototype._coalesceMapHeightsIntoSequentialValues = function(mapArray, numberOfSegmentsToTryAndGroupInto, debugMode){
+
+	//Get the min and max heights so we know what our range is
+	debugMode = debugMode || 0;
+	var distinctHeights = this._getDistinctHeights(mapArray);
+	var minHeight = distinctHeights[0];
+	var maxHeight = distinctHeights[distinctHeights.length - 1];
+	var heightSpread = maxHeight - minHeight;
+	var totalPossibleSegments = heightSpread + 1;
+
+	numberOfSegmentsToTryAndGroupInto = (numberOfSegmentsToTryAndGroupInto > totalPossibleSegments) ? totalPossibleSegments : numberOfSegmentsToTryAndGroupInto ;
+	var segmentSize = Math.floor((heightSpread + 1) / numberOfSegmentsToTryAndGroupInto);
+
+	if(debugMode){
+		segmentSize = 1;
+	}
+
+	var groups = _.map(
+		distinctHeights,
+		function(item, index){
+	  		return index % segmentSize === 0 ? distinctHeights.slice(index, index + segmentSize) : null;
+	  	}
+	).filter(
+		function(item){
+			return item;
+		}
+	);
+
+	return groups;
+}
+
+Game.prototype._getDistinctHeights = function(mapArray){
+
+	var distinctHeights = {};
+
+	for (var y = 0; y < mapArray.length; y++) {
+		for (var x = 0; x < mapArray[y].length; x++) {
+			distinctHeights[mapArray[y][x]] = 1;
+		}
+	}
+
+	var sortedHeights = Object.keys(distinctHeights).sort();
+	return sortedHeights;
+}
+
+Game.prototype._translateHeightsIntoColorsForArray = function(mapArray, numColors, debugMode){
+
+	numColors = (debugMode) ? 1 : numColors ;
+	var groupedDistinctHeights = this._coalesceMapHeightsIntoSequentialValues(mapArray, numColors, debugMode);
+	var numDistinctColors = groupedDistinctHeights.length;
+
+	//Create a lookup table for our heights
+	var colorIndicesByHeight = {};
+	_.forEach(groupedDistinctHeights, function(heightArray, idx){
+
+		_.forEach(heightArray, function(height){
+			colorIndicesByHeight[height] = idx;
+		});
+
+	});
+
+	var colorKey = [];
+	var hexVal;
+	var i;
+
+	if(debugMode){ //We're assuming we're not going to have more than 255 different heights...
+		var stepValue = Math.floor( 255 / numDistinctColors );
+
+		for(i = 0; i < 255; i+=stepValue){
+			hexVal = i.toString(16);
+			if(hexVal.length == 1){
+				hexVal = "0" + hexVal;
+			}
+			colorKey.push("#" + hexVal + hexVal + hexVal);
+		}
+	}else{
+		colorKey = [
+			"#0004E3", //blue
+			"#D0E300", //yellow
+			"#56C656", //l green
+			"#0a9000", //d green
+			"#8C8C8C", //gray
+			"#8C8C8C", //gray
+		];
+	}
 
 	var colorArray = [];
 	var heightVal;
 	var color;
 
-	var colorKey = {
-		/*0 : "#330044",
-		1 : "#220066",
-		2 : "#1133cc",
-		3 : "#33dd00",
-		4 : "#ffda21",
-		5 : "#ff6622",
-		6 : "#d10000",*/
-
-		/*5 : "#220066",
-		6 : "#1133cc",
-		7 : "#33dd00",
-		8 : "#ffda21",
-		9 : "#ff6622",
-		10 : "#d10000",*/
-
-		6 : "#0004E3", //blue
-		7 : "#D0E300", //yellow
-		8 : "#56C656", //l green
-		9 : "#0a9000", //d green
-		10 : "#8C8C8C", //gray
-		11 : "#8C8C8C", //gray
-	};
-
-	/*var k = 0;
-	for(var i = 10; i < 255; i+=10){
-		var hexVal = i.toString(16);
-		colorKey[k] = "#" + hexVal + hexVal + hexVal;
-		k++;
-	}*/
-
+	var heights = Object.keys(colorKey);
 	for (var h = 0; h < mapArray.length; h++) {
 		for (var w = 0; w < mapArray[h].length; w++) {
 			heightVal = mapArray[h][w];
-
-			//color = (colorKey[heightVal] != undefined) ? colorKey[heightVal] : "#ffffff" ;
-
-			if(heightVal < 6){
-				//color = "#0004E3";
-				color = "#0005af";
-			}else if(heightVal > 11){
-				color = "#f7f7f7";
-			}else{
-				color = colorKey[heightVal];
-			}
+			color = colorKey[colorIndicesByHeight[heightVal]];
 			
 			if( colorArray[h] == undefined ){
 				colorArray[h] = [];
@@ -733,6 +811,36 @@ Game.prototype._translateHeightsIntoColorsForArray = function(mapArray){
 		}
 	}
 	return colorArray;
+}
+
+Game.prototype.translateHeightsIntoTerrain = function(mapArray){
+
+}
+
+Game.prototype._getMinAndMaxHeights = function(mapArray){
+	var minHeight;
+	var maxHeight;
+	var heightVal;
+
+	for (var h = 0; h < mapArray.length; h++) {
+		for (var w = 0; w < mapArray[h].length; w++) {
+			heightVal = mapArray[h][w];
+			if(minHeight == undefined && maxHeight == undefined){
+				minHeight = heightVal;
+				maxHeight = heightVal;
+			}
+
+			if(heightVal < minHeight){
+				minHeight = heightVal;
+			}
+
+			if(heightVal > maxHeight){
+				maxHeight = heightVal;
+			}
+		}
+	}
+
+	return [minHeight, maxHeight];
 }
 
 Game.prototype._TESTLOGMAP = function(mapArray){
