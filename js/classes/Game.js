@@ -67,6 +67,7 @@ Game.prototype.init = function(data){
 	this.resources = ko.observable(data.resources || this._getDefaultResources());
 	this.playSpeed = ko.observable(1);
 	this.mapArray = ko.observable([]);
+	this.newGameGeneratedMaps = ko.observableArray([]);
 
 	//Computed
 	this.totalSettlers = ko.computed(function(){
@@ -449,19 +450,72 @@ Game.prototype.revealText = function(targetElemOrSelector, revealSpeed, waitInSe
 			left : '-10%',
 			width : '110%',
 			height : '100%',
-		}).addClass('white-gradient-with-transparency').appendTo(targetElemOrSelector);
+		}).addClass('white-gradient-with-left-transparency').appendTo(targetElemOrSelector);
 		targetElemOrSelector.show();
-		overlayDiv.hide("slide", { direction: "right", easing: "linear" }, revealSpeed, function(){
-			
-			overlayDiv.remove();
-			targetElemOrSelector.css("position", origPosition);
-			targetElemOrSelector.css("overflow", origOverflow);
 
-			setTimeout(function(){
-				resolve();
-			}, waitInSecondsBeforeReturning);
+		overlayDiv.animate(
+			{
+				left : '100%'
+			},
+			revealSpeed,
+			"linear",
+			function(){
+				overlayDiv.remove();
+				targetElemOrSelector.css("position", origPosition);
+				targetElemOrSelector.css("overflow", origOverflow);
 
-		});
+				setTimeout(function(){
+					resolve();
+				}, waitInSecondsBeforeReturning);
+			}
+		);
+
+	});
+
+	return promise;
+
+}
+
+Game.prototype.fadeOutDiv = function(targetElemOrSelector, fadeSpeed, waitInSecondsBeforeReturning) {
+
+	var promise = new Promise(function(resolve, reject){
+
+		targetElemOrSelector = ( targetElemOrSelector instanceof jQuery ) ? targetElemOrSelector : $(targetElemOrSelector) ;
+		fadeSpeed = (fadeSpeed != undefined) ? fadeSpeed : 2000 ;
+		waitInSecondsBeforeReturning = waitInSecondsBeforeReturning || 0;
+
+		var origPosition = targetElemOrSelector.css("position");
+		var origOverflow = targetElemOrSelector.css("overflow");
+		targetElemOrSelector.css("position", "relative");
+		targetElemOrSelector.css("overflow", "hidden");
+
+		var overlayDiv = $('<div></div>').css({
+			position : 'absolute',
+			top : '-125%',
+			left : '0px',
+			width : '100%',
+			height : '125%',
+		}).addClass('white-gradient-with-bottom-transparency').appendTo(targetElemOrSelector);
+
+
+		overlayDiv.animate(
+			{
+				top : '0%'
+			},
+			fadeSpeed,
+			"linear",
+			function(){
+				targetElemOrSelector.hide(0, function(){
+					overlayDiv.remove();
+					targetElemOrSelector.css("position", origPosition);
+					targetElemOrSelector.css("overflow", origOverflow);
+
+					setTimeout(function(){
+						resolve();
+					}, waitInSecondsBeforeReturning);
+				});
+			}
+		);
 
 	});
 
@@ -491,6 +545,7 @@ Game.prototype.generateHeightMapUsingParticleDepositionAlgorithm = function(opti
 	var numBlurPasses = $Utils.setDefaultValue(options.numBlurPasses, 1);
 	var moveTowardsCenterOnSuccessivePasses = $Utils.setDefaultValue(options.moveTowardsCenterOnSuccessivePasses, 1);
 	var edgePadding = $Utils.setDefaultValue(options.edgePadding, 1);
+	var returnColorizedOrTerrainTypeMap = returnColorizedOrTerrainTypeMap || "terrain";
 
 	var mapArray = [];
 	var pickedPoints = {};
@@ -591,7 +646,30 @@ Game.prototype.generateHeightMapUsingParticleDepositionAlgorithm = function(opti
 	}
 
 	//var terrainArray = this.translateHeightsIntoTerrain(mapArray);
-	this.mapArray(this._translateHeightsIntoColorsForArray(mapArray, 5));
+	var mappedColors = [
+		"#0004E3", //blue
+		"#D0E300", //yellow
+		"#56C656", //l green
+		"#0a9000", //d green
+		"#8C8C8C", //gray
+		"#8C8C8C", //gray
+	];
+	var mappedTerrain = [
+		"water", //blue
+		"sand", //yellow
+		"grassland", //l green
+		"woods", //d green
+		"mountain", //gray
+		"mountain", //gray
+	];
+
+	mapArray = this.mapArray(
+		this._getMapArrayCoalescedAndTransformedIntoGivenParameters(
+			mapArray,
+			(returnColorizedOrTerrainTypeMap == "terrain" ? mappedTerrain : mappedColors ),
+			(returnColorizedOrTerrainTypeMap == "terrain" ? "water" : "#ffffff" ),
+		)
+	);
 
 	return mapArray;
 }
@@ -692,7 +770,7 @@ Game.prototype._applyBlurToMap = function(numBlurPasses, mapArray){
 					outputValue += (intermediateArray[vertIdx][vx] * kernelToUse[k]);
 				}
 
-				//Put the new value in the intermediate array
+				//Put the new value in the final output array
 				if( newArray[vy] == undefined ){
 					newArray[vy] = [];
 				}
@@ -752,11 +830,21 @@ Game.prototype._getDistinctHeights = function(mapArray){
 	return sortedHeights;
 }
 
-Game.prototype._translateHeightsIntoColorsForArray = function(mapArray, numColors, debugMode){
+Game.prototype._getMapArrayCoalescedAndTransformedIntoGivenParameters = function(mapArray, arrayOfStringsToMapInto, defaultString){
 
-	numColors = (debugMode) ? 1 : numColors ;
-	var groupedDistinctHeights = this._coalesceMapHeightsIntoSequentialValues(mapArray, numColors, debugMode);
-	var numDistinctColors = groupedDistinctHeights.length;
+	var desiredNumSegments;
+	var debugMode = 0;
+	if(arrayOfStringsToMapInto == undefined){
+		desiredNumSegments = 1;
+		debugMode = 1;
+		arrayOfStringsToMapInto = [];
+		defaultString = "#ff0000";
+	}else{
+		desiredNumSegments = arrayOfStringsToMapInto.length;
+	}
+
+	var groupedDistinctHeights = this._coalesceMapHeightsIntoSequentialValues(mapArray, desiredNumSegments, debugMode);
+	var numDistinctValues = groupedDistinctHeights.length;
 
 	//Create a lookup table for our heights
 	var colorIndicesByHeight = {};
@@ -768,49 +856,38 @@ Game.prototype._translateHeightsIntoColorsForArray = function(mapArray, numColor
 
 	});
 
-	var colorKey = [];
 	var hexVal;
 	var i;
+	var newArray = [];
+	var heightVal;
+	var newValue;
 
 	if(debugMode){ //We're assuming we're not going to have more than 255 different heights...
-		var stepValue = Math.floor( 255 / numDistinctColors );
+		var stepValue = Math.floor( 255 / numDistinctValues );
 
 		for(i = 0; i < 255; i+=stepValue){
 			hexVal = i.toString(16);
 			if(hexVal.length == 1){
 				hexVal = "0" + hexVal;
 			}
-			colorKey.push("#" + hexVal + hexVal + hexVal);
+			arrayOfStringsToMapInto.push("#" + hexVal + hexVal + hexVal);
 		}
-	}else{
-		colorKey = [
-			"#0004E3", //blue
-			"#D0E300", //yellow
-			"#56C656", //l green
-			"#0a9000", //d green
-			"#8C8C8C", //gray
-			"#8C8C8C", //gray
-		];
 	}
 
-	var colorArray = [];
-	var heightVal;
-	var color;
-
-	var heights = Object.keys(colorKey);
+	var heights = Object.keys(arrayOfStringsToMapInto);
 	for (var h = 0; h < mapArray.length; h++) {
 		for (var w = 0; w < mapArray[h].length; w++) {
 			heightVal = mapArray[h][w];
-			color = colorKey[colorIndicesByHeight[heightVal]];
+			newValue = ( arrayOfStringsToMapInto[colorIndicesByHeight[heightVal]] != undefined ) ? arrayOfStringsToMapInto[colorIndicesByHeight[heightVal]] : defaultString ;
 			
-			if( colorArray[h] == undefined ){
-				colorArray[h] = [];
+			if( newArray[h] == undefined ){
+				newArray[h] = [];
 			}
 
-			colorArray[h][w] = { color : color, height : heightVal };
+			newArray[h][w] = { mappedValue : newValue, height : heightVal };
 		}
 	}
-	return colorArray;
+	return newArray;
 }
 
 Game.prototype.translateHeightsIntoTerrain = function(mapArray){
@@ -858,18 +935,40 @@ Game.prototype.gameOver = function(){
 }
 
 Game.prototype.newGame = function() {
+
 	var self = this;
+	var maps = [];
+
+	//Hide the start game buttons
 	this._hideOneElemAndShowAnother(
 		"#newgame-content",
 		"#intro-content",
 		300,
 		300
 	).then(function(){
-		return self.revealText("#intro-s1-p1", 3000, 1000);
-	}).then(function(){
-		return self.revealText("#intro-s1-p2", 3000, 1000);
-	}).then(function(){
-		return self.revealText("#intro-s1-p3", 3000, 1000);
+
+		//Show the loading symbol
+
+		//Generate six maps to choose from
+		for(var i = 0; i < 6; i++){
+			maps.push(game.generateHeightMapUsingParticleDepositionAlgorithm({
+				width : 50,
+				height : 50,
+				numberOfDropPoints : 10,
+				minParticlesPerPoint : 1,
+				maxParticlesPerPoint : 1,
+				numPasses : 10,
+				minRadiusToLookForLowerNeighbors : 1,
+				maxRadiusToLookForLowerNeighbors : 1,
+				numBlurPasses : 2,
+				edgePadding : 5
+			}));
+		}
+		self.newGameGeneratedMaps(maps);
+	});
+	
+	self.revealText("#intro-s1-p1", 3000, 0).then(function(){
+		return self.revealText("#intro-s1-p2", 3000, 2000);
 	}).then(function(){
 		$("#intro-s1-buttons").fadeIn(500);
 	});
@@ -888,7 +987,39 @@ Game.prototype._getDefaultResources = function(){
 	};
 }
 
+Game.prototype._translateTerrainTypeIntoColor = function(terrainType){
 
+	var mappedTerrainTypesToColors = {
+		"water" : "#0004E3", //blue
+		"sand" : "#D0E300", //yellow
+		"grassland" : "#56C656", //l green
+		"woods" : "#0a9000", //d green
+		"mountain" : "#8C8C8C", //gray
+	};
+
+	return (mappedTerrainTypesToColors[terrainType] != undefined) ? mappedTerrainTypesToColors[terrainType] : "#ffffff" ;
+}
+
+Game.prototype.continueIntroFrom = function(slideName){
+
+	var self = this;
+
+	if(slideName == "p1"){
+		
+		this.fadeOutDiv(
+			"#intro-s1",
+			600
+		).then(function(){
+			$("#intro-s2").show();
+			return self.revealText("#intro-s2-p1", 3000, 0);
+		}).then(function(){
+			return self.revealText("#intro-s2-p2", 3000, 2000);
+		}).then(function(){
+			$("#intro-s2-buttons").fadeIn(500);
+		});
+
+	}
+}
 
 
 

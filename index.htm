@@ -94,7 +94,7 @@
 					<div class="col-sm-6 content" id="fullscreen-content">
 
 						<!-- start newgame content -->
-						<div class="newgame-content hidden" id="newgame-content">
+						<div class="newgame-content" id="newgame-content">
 							<div class="buttons">
 								<button type="button" class="save-load-controls btn btn-md btn-default load-button" data-bind="click: loadGame">Load Game</button>
 								<button type="button" class="save-load-controls btn btn-md btn-default new-button" data-bind="click: newGame">New Game</button>
@@ -104,18 +104,49 @@
 
 						<!-- start intro sequence content -->
 						<div class="intro-content hidden" id="intro-content">
-							<div id="intro-s1-p1" class="hidden intro-text-paragraph">
-								Three were given to the Elves; immortal, wisest and fairest of all beings.
+
+							<div class="intro-s1" id="intro-s1">
+
+								<div id="intro-s1-p1" class="hidden intro-text-paragraph">
+									Journal Entry 1
+								</div>
+								<div id="intro-s1-p2" class="hidden intro-text-paragraph">
+									I'm going to try and keep a journal of events. Maybe it will be useful for someone, someday. Feels good to be writing something down, like I can still do something that matters. I don't know if any of us will make it out of this, but I think we have to try.
+								</div>
+								<div id="intro-s1-buttons" class="hidden intro-buttons">
+									<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('p1'); }">Continue</button>
+									<div class="clear"></div>
+								</div>
+
 							</div>
-							<div id="intro-s1-p2" class="hidden intro-text-paragraph">
-								Seven, to the Dwarf Lords, great miners and craftsmen of the mountain halls.
-							</div>
-							<div id="intro-s1-p3" class="hidden intro-text-paragraph">
-								And nine, nine rings were gifted to the race of Men, who above all else desire power.
-							</div>
-							<div id="intro-s1-buttons" class="hidden intro-buttons">
-								<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('p1'); }">Continue</button>
-								<div class="clear"></div>
+
+							<div class="intro-s2 hidden" id="intro-s2">
+
+								<div id="intro-s2-p1" class="hidden intro-text-paragraph">
+									Journal Entry 2
+								</div>
+								<div id="intro-s2-p2" class="hidden intro-text-paragraph">
+									We've decided to go to this place I remembered reading about one time. I sketched out a quick map for everyone. It looked like:
+								</div>
+								<div class="new-game-map-container">
+									<!-- ko foreach: newGameGeneratedMaps -->
+									<div class="map-rendering" >
+										<!-- ko foreach: mapArray -->
+										<div class="map-row">
+											<!-- ko foreach: $data -->
+												<div class="map-cell sm" data-bind="style : {backgroundColor : $root._translateTerrainTypeIntoColor($data.mappedValue)}, attr : {'data-height' : $data.height} "></div>
+											<!-- /ko -->
+											<div class="clear"></div>
+										</div>
+										<!-- /ko -->
+									</div>
+									<!-- /ko -->
+								</div>
+								<div id="intro-s2-buttons" class="hidden intro-buttons">
+									<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('p2'); }">Continue</button>
+									<div class="clear"></div>
+								</div>
+
 							</div>
 						</div>
 						<!-- end intro sequence content -->
@@ -125,7 +156,7 @@
 							<!-- ko foreach: mapArray -->
 							<div class="map-row">
 								<!-- ko foreach: $data -->
-									<div class="map-cell" data-bind="style : {backgroundColor : $data.color}, attr : {'data-height' : $data.height} "></div>
+									<div class="map-cell" data-bind="style : {backgroundColor : $data.mappedValue}, attr : {'data-height' : $data.height} "></div>
 								<!-- /ko -->
 								<div class="clear"></div>
 							</div>

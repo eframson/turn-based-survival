@@ -35,12 +35,20 @@ button:focus {
 .small {
   font-size: 12px; }
 
-.white-gradient-with-transparency {
+.white-gradient-with-left-transparency {
   background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, white 7%, white 100%);
   /* FF3.6-15 */
   background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, white 7%, white 100%);
   /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, white 7%, white 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */ }
+
+.white-gradient-with-bottom-transparency {
+  background: -moz-linear-gradient(bottom, rgba(255, 255, 255, 0) 0%, white 25%, white 100%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(bottom, rgba(255, 255, 255, 0) 0%, white 25%, white 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, white 25%, white 100%);
   /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */ }
 
 /* End general styles */
@@ -80,23 +88,23 @@ button:focus {
     margin: auto; }
   .body-area .onecol-row #fullscreen-content .intro-content .intro-text-paragraph {
     margin-bottom: 10px; }
-  .body-area .onecol-row #fullscreen-content .intro-content #intro-s1-buttons button {
+  .body-area .onecol-row #fullscreen-content .intro-content #intro-s1-buttons button,
+  .body-area .onecol-row #fullscreen-content .intro-content #intro-s2-buttons button {
     float: right; }
   .body-area .onecol-row #fullscreen-content .map-rendering .map-row {
     margin: 0; }
     .body-area .onecol-row #fullscreen-content .map-rendering .map-row .map-cell {
       float: left;
-      margin: 0;
-      width: 2px;
-      height: 2px;
-      /*
-      width: 4px;
-      height: 4px;
-      */
-      /*
-      width: 8px;
-      height: 8px;
-      */ }
+      margin: 0; }
+      .body-area .onecol-row #fullscreen-content .map-rendering .map-row .map-cell.sm {
+        width: 2px;
+        height: 2px; }
+      .body-area .onecol-row #fullscreen-content .map-rendering .map-row .map-cell.md {
+        width: 4px;
+        height: 4px; }
+      .body-area .onecol-row #fullscreen-content .map-rendering .map-row .map-cell.lg {
+        width: 8px;
+        height: 8px; }
 .body-area .threecol-row {
   min-height: 200px; }
 
