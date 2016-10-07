@@ -68,6 +68,9 @@ Game.prototype.init = function(data){
 	this.playSpeed = ko.observable(1);
 	this.mapArray = ko.observable([]);
 	this.newGameGeneratedMaps = ko.observableArray([]);
+	this.selectedMapIdx = ko.observable();
+	this.leadersToChooseFrom = ko.observableArray([]);
+	this.selectedLeaderIdx = ko.observable();
 
 	//Computed
 	this.totalSettlers = ko.computed(function(){
@@ -83,8 +86,36 @@ Game.prototype.init = function(data){
 
 	this._setupDefaultTimeEvents();
 
-	this.somePerson = new Person({ name : 'Bob' });
-	this.someSettler = new Settler({ name : 'Jeff', tribe : 'Umpqua' });
+	//Set up leaders
+	this.leadersToChooseFrom([
+		{
+			id : 'torvald',
+			name : 'Torvald Magnusson',
+			age : 44,
+			bio : 'Until very recently, a much-beloved CEO of a Fortune 100 company. According to his husband, Torvald could "charm the spots off a leopard." '
+				+ 'There\'s usually less working and a lot more talking when he\'s around, but everybody sure has a good time.', // +2 recruitment, -1 construction
+			strengthDescription : '',
+			weaknessDescription : '',
+		},
+		{
+			id : 'melody',
+			name : 'Melody Sterling',
+			age : 28,
+			bio : 'Raised on a farm, Melody has never been one to shy away from hard work. Somewhat plain-spoken, but you\'ll not find anyone more practical or earnest. '
+				+ 'Whenever she has spare time she likes to play the guitar or sew.', // +1 construction
+			strengthDescription : '',
+			weaknessDescription : '',
+		},
+		{
+			id : 'philip',
+			name : 'Philip Olivares',
+			age : 35,
+			bio : 'A self-professed nerd and history buff. Highly intelligent, you\'ll usually find Philip with his nose in a book. '
+				+ 'His "big picture" worldview tends to give those around him the impression that he\'s a bit out of touch with reality.', // +2 research, -1 recruitment
+			strengthDescription : '',
+			weaknessDescription : '',
+		},
+	]);
 }
 
 Game.prototype.mainLoop = function() {
@@ -438,6 +469,10 @@ Game.prototype.revealText = function(targetElemOrSelector, revealSpeed, waitInSe
 	var promise = new Promise(function(resolve, reject){
 
 		targetElemOrSelector = ( targetElemOrSelector instanceof jQuery ) ? targetElemOrSelector : $(targetElemOrSelector) ;
+		if( targetElemOrSelector.length == 0 ){
+			//Not actually a success, but prevents getting stuck if a non-existent selector is passed by a dumb programmer
+			resolve();
+		}
 		revealSpeed = (revealSpeed != undefined) ? revealSpeed : 2000 ;
 		waitInSecondsBeforeReturning = waitInSecondsBeforeReturning || 0;
 

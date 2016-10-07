@@ -87,11 +87,11 @@
 				<div class="onecol-row row hidden">
 
 					<!-- spacer -->
-					<div class="col-sm-3"></div>
+					<div class="col-sm-2"></div>
 					<!-- end spacer -->
 
 					<!-- start col-sm-12 -->
-					<div class="col-sm-6 content" id="fullscreen-content">
+					<div class="col-sm-8 content" id="fullscreen-content">
 
 						<!-- start newgame content -->
 						<div class="newgame-content" id="newgame-content">
@@ -107,14 +107,36 @@
 
 							<div class="intro-s1" id="intro-s1">
 
-								<div id="intro-s1-p1" class="hidden intro-text-paragraph">
-									Journal Entry 1
-								</div>
-								<div id="intro-s1-p2" class="hidden intro-text-paragraph">
-									I'm going to try and keep a journal of events. Maybe it will be useful for someone, someday. Feels good to be writing something down, like I can still do something that matters. I don't know if any of us will make it out of this, but I think we have to try.
+								<div id="intro-s1-p1" class="hidden">
+									<p class="intro-text-paragraph strong">Choose your leader:</p>
+									<div class="leader-list">
+										<!-- ko foreach: leadersToChooseFrom -->
+										<div class="leader" data-bind="css: { selected : $index == $root.selectedLeaderIdx() }, click: function(){ $root.selectedLeaderIdx($index); }">
+											<p class="intro-text-paragraph" data-bind="text: $data.name"></p>
+											<p class="intro-text-paragraph" data-bind="text: 'Age: ' + $data.age"></p>
+											<p class="intro-text-paragraph" data-bind="text: $data.bio"></p>
+										</div>
+										<!-- /ko -->
+										<div class="clear"></div>
+									</div>
 								</div>
 								<div id="intro-s1-buttons" class="hidden intro-buttons">
-									<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('p1'); }">Continue</button>
+									<button type="button" class="btn btn-md btn-default" data-bind="enable: selectedLeaderIdx() != undefined, click: function(){ continueIntroFrom('p1'); }">Continue</button>
+									<div class="clear"></div>
+								</div>
+
+							</div>
+
+							<div class="intro-s2" id="intro-s2">
+
+								<div id="intro-s2-p1" class="hidden intro-text-paragraph">
+									Journal Entry 1
+								</div>
+								<div id="intro-s2-p2" class="hidden intro-text-paragraph">
+									I'm going to try and keep a journal of events. Maybe it will be useful for someone, someday. Feels good to be writing something down, like I can still do something that matters. I don't know if any of us will make it out of this, but I think we have to try.
+								</div>
+								<div id="intro-s2-buttons" class="hidden intro-buttons">
+									<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('p2'); }">Continue</button>
 									<div class="clear"></div>
 								</div>
 
@@ -130,7 +152,7 @@
 								</div>
 								<div class="new-game-map-container hidden" id="intro-s2-p3">
 									<!-- ko foreach: newGameGeneratedMaps -->
-									<div class="map-rendering" >
+									<div class="map-rendering" data-bind="css: { selected : $index == $root.selectedMapIdx() }, click: function(){ $root.selectedMapIdx($index); }">
 										<!-- ko foreach: $data -->
 										<div class="map-row">
 											<!-- ko foreach: $data -->
@@ -143,7 +165,7 @@
 									<!-- /ko -->
 								</div>
 								<div id="intro-s2-buttons" class="hidden intro-buttons">
-									<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('p2'); }">Continue</button>
+									<button type="button" class="btn btn-md btn-default" data-bind="enable: selectedMapIdx() != undefined, click: function(){ continueIntroFrom('p2'); }">Continue</button>
 									<div class="clear"></div>
 								</div>
 
@@ -155,7 +177,7 @@
 					<!-- end col-sm-12 -->
 
 					<!-- spacer -->
-					<div class="col-sm-3"></div>
+					<div class="col-sm-2"></div>
 					<!-- end spacer -->
 
 				</div>

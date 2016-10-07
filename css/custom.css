@@ -35,6 +35,12 @@ button:focus {
 .small {
   font-size: 12px; }
 
+.strong {
+  font-weight: bold; }
+
+.em {
+  font-style: italic; }
+
 .white-gradient-with-left-transparency {
   background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, white 7%, white 100%);
   /* FF3.6-15 */
@@ -91,9 +97,28 @@ button:focus {
   .body-area .onecol-row #fullscreen-content .intro-content #intro-s1-buttons button,
   .body-area .onecol-row #fullscreen-content .intro-content #intro-s2-buttons button {
     float: right; }
+  .body-area .onecol-row #fullscreen-content .intro-content #intro-s2-buttons button {
+    margin-right: 15px; }
+  .body-area .onecol-row #fullscreen-content .intro-content #intro-s1-buttons,
+  .body-area .onecol-row #fullscreen-content .intro-content #intro-s2-buttons {
+    margin-top: 10px; }
+  .body-area .onecol-row #fullscreen-content .intro-content .leader {
+    float: left;
+    width: 200px;
+    height: 310px;
+    border: 10px #ffffff solid;
+    padding: 5px; }
+    .body-area .onecol-row #fullscreen-content .intro-content .leader:hover {
+      border: 10px #016000 solid;
+      cursor: pointer; }
+    .body-area .onecol-row #fullscreen-content .intro-content .leader:active {
+      border: 10px #258224 solid;
+      cursor: pointer; }
+    .body-area .onecol-row #fullscreen-content .intro-content .leader.selected {
+      border: 10px #016000 solid; }
   .body-area .onecol-row #fullscreen-content .intro-content .new-game-map-container {
     width: 360px;
-    height: 620px;
+    height: 240px;
     margin-left: auto;
     margin-right: auto; }
   .body-area .onecol-row #fullscreen-content .intro-content .map-rendering {
@@ -101,9 +126,13 @@ button:focus {
     /*margin: 0 10px 10px 10px;*/
     border: 10px #ffffff solid; }
     .body-area .onecol-row #fullscreen-content .intro-content .map-rendering:hover {
-      border: 10px #016000 solid; }
+      border: 10px #016000 solid;
+      cursor: pointer; }
     .body-area .onecol-row #fullscreen-content .intro-content .map-rendering:active {
-      border: 10px #258224 solid; }
+      border: 10px #258224 solid;
+      cursor: pointer; }
+    .body-area .onecol-row #fullscreen-content .intro-content .map-rendering.selected {
+      border: 10px #016000 solid; }
     .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row {
       margin: 0; }
       .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row .map-cell {
