@@ -413,7 +413,9 @@ Game.prototype._hideOneElemAndShowAnother = function(firstElemOrSelector, second
 			}
 
 			secondElemOrSelector.fadeIn(fadeInSpeed, function(){
-				resolve();
+				setTimeout(function(){
+					resolve();
+				}, 0);
 			});
 
 		});
@@ -663,12 +665,10 @@ Game.prototype.generateHeightMapUsingParticleDepositionAlgorithm = function(opti
 		"mountain", //gray
 	];
 
-	mapArray = this.mapArray(
-		this._getMapArrayCoalescedAndTransformedIntoGivenParameters(
-			mapArray,
-			(returnColorizedOrTerrainTypeMap == "terrain" ? mappedTerrain : mappedColors ),
-			(returnColorizedOrTerrainTypeMap == "terrain" ? "water" : "#ffffff" ),
-		)
+	mapArray = this._getMapArrayCoalescedAndTransformedIntoGivenParameters(
+		mapArray,
+		(returnColorizedOrTerrainTypeMap == "terrain" ? mappedTerrain : mappedColors ),
+		(returnColorizedOrTerrainTypeMap == "terrain" ? "mountain" : "#8C8C8C" )
 	);
 
 	return mapArray;
@@ -939,38 +939,47 @@ Game.prototype.newGame = function() {
 	var self = this;
 	var maps = [];
 
+	//$("#loading").show();
+
 	//Hide the start game buttons
 	this._hideOneElemAndShowAnother(
 		"#newgame-content",
-		"#intro-content",
+		"#loading",
 		300,
 		300
 	).then(function(){
-
-		//Show the loading symbol
-
-		//Generate six maps to choose from
-		for(var i = 0; i < 6; i++){
-			maps.push(game.generateHeightMapUsingParticleDepositionAlgorithm({
-				width : 50,
-				height : 50,
-				numberOfDropPoints : 10,
-				minParticlesPerPoint : 1,
-				maxParticlesPerPoint : 1,
-				numPasses : 10,
-				minRadiusToLookForLowerNeighbors : 1,
-				maxRadiusToLookForLowerNeighbors : 1,
-				numBlurPasses : 2,
-				edgePadding : 5
-			}));
-		}
-		self.newGameGeneratedMaps(maps);
-	});
-	
-	self.revealText("#intro-s1-p1", 3000, 0).then(function(){
-		return self.revealText("#intro-s1-p2", 3000, 2000);
+		return new Promise(function(resolve, reject){
+			//Show the loading symbol
+			for(var i = 0; i < 6; i++){
+				maps.push(game.generateHeightMapUsingParticleDepositionAlgorithm({
+					width : 50,
+					height : 50,
+					numberOfDropPoints : 10,
+					minParticlesPerPoint : 1,
+					maxParticlesPerPoint : 1,
+					numPasses : 10,
+					minRadiusToLookForLowerNeighbors : 1,
+					maxRadiusToLookForLowerNeighbors : 1,
+					numBlurPasses : 2,
+					edgePadding : 5
+				}));
+			}
+			self.newGameGeneratedMaps(maps);
+			resolve();
+		});
 	}).then(function(){
-		$("#intro-s1-buttons").fadeIn(500);
+		return self._hideOneElemAndShowAnother(
+			"#loading",
+			"#intro-content",
+			0,
+			300
+		)
+	}).then(function(){
+		return self.revealText("#intro-s1-p1", 0, 0); //3000, 0
+	}).then(function(){
+		return self.revealText("#intro-s1-p2", 0, 0); //3000, 2000
+	}).then(function(){
+		$("#intro-s1-buttons").fadeIn(0); //500
 	});
 }
 
@@ -1011,11 +1020,13 @@ Game.prototype.continueIntroFrom = function(slideName){
 			600
 		).then(function(){
 			$("#intro-s2").show();
-			return self.revealText("#intro-s2-p1", 3000, 0);
+			return self.revealText("#intro-s2-p1", 0, 0); //3000, 0
 		}).then(function(){
-			return self.revealText("#intro-s2-p2", 3000, 2000);
+			return self.revealText("#intro-s2-p2", 0, 0); //3000, 1000
 		}).then(function(){
-			$("#intro-s2-buttons").fadeIn(500);
+			return self.revealText("#intro-s2-p3", 0, 0); //1000, 2000
+		}).then(function(){
+			$("#intro-s2-buttons").fadeIn(0); //500
 		});
 
 	}

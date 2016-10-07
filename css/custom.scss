@@ -2,7 +2,7 @@
 
 /* Loading spinner */
 $loader-dimensions: 48px;
-$loader-color: #ff0000;
+$loader-color: #016000;
 
 /* Animation style */
 @keyframes spin {
@@ -149,32 +149,51 @@ button:focus {
 					float: right;
 				}
 
-			}
+				.new-game-map-container {
+					width: 360px;
+					height: 620px;
+					margin-left: auto;
+					margin-right: auto;
+				}
 
-			.map-rendering {
+				.map-rendering {
 
-				.map-row {
+					float: left;
+					/*margin: 0 10px 10px 10px;*/
+					border: 10px #ffffff solid;
 
-					margin: 0;
+					&:hover{
+						border: 10px #016000 solid;
+					}
 
-					.map-cell {
-						
-						float: left;
+					&:active{
+						border: 10px #258224 solid;
+					}
+
+					.map-row {
+
 						margin: 0;
 
-						&.sm {
-							width: 2px;
-							height: 2px;	
-						}
+						.map-cell {
+							
+							float: left;
+							margin: 0;
 
-						&.md {
-							width: 4px;
-							height: 4px;	
-						}
+							&.sm {
+								width: 2px;
+								height: 2px;	
+							}
 
-						&.lg {
-							width: 8px;
-							height: 8px;	
+							&.md {
+								width: 4px;
+								height: 4px;	
+							}
+
+							&.lg {
+								width: 8px;
+								height: 8px;	
+							}
+
 						}
 
 					}

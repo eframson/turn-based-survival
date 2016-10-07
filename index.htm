@@ -128,10 +128,10 @@
 								<div id="intro-s2-p2" class="hidden intro-text-paragraph">
 									We've decided to go to this place I remembered reading about one time. I sketched out a quick map for everyone. It looked like:
 								</div>
-								<div class="new-game-map-container">
+								<div class="new-game-map-container hidden" id="intro-s2-p3">
 									<!-- ko foreach: newGameGeneratedMaps -->
 									<div class="map-rendering" >
-										<!-- ko foreach: mapArray -->
+										<!-- ko foreach: $data -->
 										<div class="map-row">
 											<!-- ko foreach: $data -->
 												<div class="map-cell sm" data-bind="style : {backgroundColor : $root._translateTerrainTypeIntoColor($data.mappedValue)}, attr : {'data-height' : $data.height} "></div>
@@ -150,19 +150,6 @@
 							</div>
 						</div>
 						<!-- end intro sequence content -->
-
-						<!-- start (temporarily located) map content -->
-						<div class="map-rendering" id="map-rendering">
-							<!-- ko foreach: mapArray -->
-							<div class="map-row">
-								<!-- ko foreach: $data -->
-									<div class="map-cell" data-bind="style : {backgroundColor : $data.mappedValue}, attr : {'data-height' : $data.height} "></div>
-								<!-- /ko -->
-								<div class="clear"></div>
-							</div>
-							<!-- /ko -->
-						</div>
-						<!-- end (temporarily located) map content -->
 
 					</div>
 					<!-- end col-sm-12 -->

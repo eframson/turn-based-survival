@@ -77,8 +77,8 @@ button:focus {
   border-radius: 50%;
   width: 48px;
   height: 48px;
-  border: 0.25rem solid rgba(255, 0, 0, 0.2);
-  border-top-color: #ff0000;
+  border: 0.25rem solid rgba(1, 96, 0, 0.2);
+  border-top-color: #016000;
   animation: spin 1s infinite linear;
   margin: auto; }
 .body-area .onecol-row #fullscreen-content {
@@ -91,20 +91,33 @@ button:focus {
   .body-area .onecol-row #fullscreen-content .intro-content #intro-s1-buttons button,
   .body-area .onecol-row #fullscreen-content .intro-content #intro-s2-buttons button {
     float: right; }
-  .body-area .onecol-row #fullscreen-content .map-rendering .map-row {
-    margin: 0; }
-    .body-area .onecol-row #fullscreen-content .map-rendering .map-row .map-cell {
-      float: left;
+  .body-area .onecol-row #fullscreen-content .intro-content .new-game-map-container {
+    width: 360px;
+    height: 620px;
+    margin-left: auto;
+    margin-right: auto; }
+  .body-area .onecol-row #fullscreen-content .intro-content .map-rendering {
+    float: left;
+    /*margin: 0 10px 10px 10px;*/
+    border: 10px #ffffff solid; }
+    .body-area .onecol-row #fullscreen-content .intro-content .map-rendering:hover {
+      border: 10px #016000 solid; }
+    .body-area .onecol-row #fullscreen-content .intro-content .map-rendering:active {
+      border: 10px #258224 solid; }
+    .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row {
       margin: 0; }
-      .body-area .onecol-row #fullscreen-content .map-rendering .map-row .map-cell.sm {
-        width: 2px;
-        height: 2px; }
-      .body-area .onecol-row #fullscreen-content .map-rendering .map-row .map-cell.md {
-        width: 4px;
-        height: 4px; }
-      .body-area .onecol-row #fullscreen-content .map-rendering .map-row .map-cell.lg {
-        width: 8px;
-        height: 8px; }
+      .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row .map-cell {
+        float: left;
+        margin: 0; }
+        .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row .map-cell.sm {
+          width: 2px;
+          height: 2px; }
+        .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row .map-cell.md {
+          width: 4px;
+          height: 4px; }
+        .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row .map-cell.lg {
+          width: 8px;
+          height: 8px; }
 .body-area .threecol-row {
   min-height: 200px; }
 
