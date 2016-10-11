@@ -1055,13 +1055,27 @@ Game.prototype.continueIntroFrom = function(slideName){
 			600
 		).then(function(){
 			$("#intro-s2").show();
-			return self.revealText("#intro-s2-p1", 0, 0); //3000, 0
+			return self.revealText("#intro-s2-p1", 3000, 0); //3000, 0
 		}).then(function(){
-			return self.revealText("#intro-s2-p2", 0, 0); //3000, 1000
+			return self.revealText("#intro-s2-p2", 3000, 1000); //3000, 1000
 		}).then(function(){
-			return self.revealText("#intro-s2-p3", 0, 0); //1000, 2000
+			$("#intro-s2-buttons").fadeIn(500); //500
+		});
+
+	} else if(slideName == "p2"){
+		
+		this.fadeOutDiv(
+			"#intro-s2",
+			600
+		).then(function(){
+			$("#intro-s3").show();
+			return self.revealText("#intro-s3-p1", 3000, 0); //3000, 0
 		}).then(function(){
-			$("#intro-s2-buttons").fadeIn(0); //500
+			return self.revealText("#intro-s3-p2", 3000, 1000); //3000, 1000
+		}).then(function(){
+			return self.revealText("#intro-s3-p3", 1000, 2000); //1000, 2000
+		}).then(function(){
+			$("#intro-s3-buttons").fadeIn(500); //500
 		});
 
 	}

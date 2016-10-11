@@ -142,15 +142,15 @@
 
 							</div>
 
-							<div class="intro-s2 hidden" id="intro-s2">
+							<div class="intro-s3 hidden" id="intro-s3">
 
-								<div id="intro-s2-p1" class="hidden intro-text-paragraph">
+								<div id="intro-s3-p1" class="hidden intro-text-paragraph">
 									Journal Entry 2
 								</div>
-								<div id="intro-s2-p2" class="hidden intro-text-paragraph">
+								<div id="intro-s3-p2" class="hidden intro-text-paragraph">
 									We've decided to go to this place I remembered reading about one time. I sketched out a quick map for everyone. It looked like:
 								</div>
-								<div class="new-game-map-container hidden" id="intro-s2-p3">
+								<div class="new-game-map-container hidden" id="intro-s3-p3">
 									<!-- ko foreach: newGameGeneratedMaps -->
 									<div class="map-rendering" data-bind="css: { selected : $index == $root.selectedMapIdx() }, click: function(){ $root.selectedMapIdx($index); }">
 										<!-- ko foreach: $data -->
@@ -164,8 +164,8 @@
 									</div>
 									<!-- /ko -->
 								</div>
-								<div id="intro-s2-buttons" class="hidden intro-buttons">
-									<button type="button" class="btn btn-md btn-default" data-bind="enable: selectedMapIdx() != undefined, click: function(){ continueIntroFrom('p2'); }">Continue</button>
+								<div id="intro-s3-buttons" class="hidden intro-buttons">
+									<button type="button" class="btn btn-md btn-default" data-bind="enable: selectedMapIdx() != undefined, click: function(){ continueIntroFrom('p3'); }">Continue</button>
 									<div class="clear"></div>
 								</div>
 
