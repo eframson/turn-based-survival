@@ -16,6 +16,11 @@ $(document).ready(function(){
 	game = new Game();
 	ko.applyBindings(game);
 
+	var hash = window.location.hash.substring(1);
+	if(hash == "fastintro"){
+		game.isDebugMode = 1;
+	}
+
 	$(document).keydown(function(e){
 		if(e.keyCode == 32){ //Space bar
 			game.spcAction();

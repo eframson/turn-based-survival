@@ -95,7 +95,8 @@ button:focus {
   .body-area .onecol-row #fullscreen-content .intro-content .intro-text-paragraph {
     margin-bottom: 10px; }
   .body-area .onecol-row #fullscreen-content .intro-content #intro-s1-buttons button,
-  .body-area .onecol-row #fullscreen-content .intro-content #intro-s2-buttons button {
+  .body-area .onecol-row #fullscreen-content .intro-content #intro-s2-buttons button,
+  .body-area .onecol-row #fullscreen-content .intro-content #intro-s3-buttons button {
     float: right; }
   .body-area .onecol-row #fullscreen-content .intro-content #intro-s2-buttons button {
     margin-right: 15px; }
@@ -105,7 +106,7 @@ button:focus {
   .body-area .onecol-row #fullscreen-content .intro-content .leader {
     float: left;
     width: 200px;
-    height: 310px;
+    height: 370px;
     border: 10px #ffffff solid;
     padding: 5px; }
     .body-area .onecol-row #fullscreen-content .intro-content .leader:hover {

@@ -10,21 +10,6 @@ Game.prototype.init = function(data){
 	data = data || {};
 
 	//Static properties
-	this.availableLeaders = [
-		{
-			id : "sterling",
-			name : "Sterling",
-			bio : "",
-		},{
-			id : "gunter",
-			name : "Günter",
-			bio : "",
-		},{
-			id : "les",
-			name : "Lesli",
-			bio : "",
-		}
-	];
 	this.seasons = [
 		'Spring',
 		'Summer',
@@ -56,6 +41,7 @@ Game.prototype.init = function(data){
 	this.scheduledChildAgingEvents = data.scheduledChildAgingEvents || { 7 : 1 };
 	this.scheduledAdultAgingEvents = data.scheduledAdultAgingEvents || { 9 : 1, 12 : 1, 16 : 1 };
 	this.scheduledDeathEvents = data.scheduledAgingEvents || { 22 : 1 };
+	this.isDebugMode = 0;
 
 	//Observables
 	this.availableSettlers = ko.observable( $Utils.setDefaultValue(data.availableSettlers, 5) );
@@ -94,8 +80,11 @@ Game.prototype.init = function(data){
 			age : 44,
 			bio : 'Until very recently, a much-beloved CEO of a Fortune 100 company. According to his husband, Torvald could "charm the spots off a leopard." '
 				+ 'There\'s usually less working and a lot more talking when he\'s around, but everybody sure has a good time.', // +2 recruitment, -1 construction
-			strengthDescription : '',
-			weaknessDescription : '',
+			strengthDescription : '+2 Recruitment',
+			weaknessDescription : '-1 Construction',
+			textStages : {
+				p2 : "I'm going to try and keep a journal of events. Maybe it will be useful for someone, someday. Feels good to be writing something down, like I can still do something that matters. I don't know if any of us will make it out of this, but I think we have to try.",
+			}
 		},
 		{
 			id : 'melody',
@@ -103,8 +92,11 @@ Game.prototype.init = function(data){
 			age : 28,
 			bio : 'Raised on a farm, Melody has never been one to shy away from hard work. Somewhat plain-spoken, but you\'ll not find anyone more practical or earnest. '
 				+ 'Whenever she has spare time she likes to play the guitar or sew.', // +1 construction
-			strengthDescription : '',
+			strengthDescription : '+1 Construction',
 			weaknessDescription : '',
+			textStages : {
+				p2 : "I'm going to try and keep a journal of events. Maybe it will be useful for someone, someday. Feels good to be writing something down, like I can still do something that matters. I don't know if any of us will make it out of this, but I think we have to try.",
+			}
 		},
 		{
 			id : 'philip',
@@ -112,8 +104,11 @@ Game.prototype.init = function(data){
 			age : 35,
 			bio : 'A self-professed nerd and history buff. Highly intelligent, you\'ll usually find Philip with his nose in a book. '
 				+ 'His "big picture" worldview tends to give those around him the impression that he\'s a bit out of touch with reality.', // +2 research, -1 recruitment
-			strengthDescription : '',
-			weaknessDescription : '',
+			strengthDescription : '+2 Research',
+			weaknessDescription : '-1 Recruitment',
+			textStages : {
+				p2 : "I'm going to try and keep a journal of events. Maybe it will be useful for someone, someday. Feels good to be writing something down, like I can still do something that matters. I don't know if any of us will make it out of this, but I think we have to try.",
+			}
 		},
 	]);
 }
@@ -1048,16 +1043,20 @@ Game.prototype.continueIntroFrom = function(slideName){
 
 	var self = this;
 
+	var slowSpeed = game.isDebugMode ? 0 : 3000;
+	var medSpeed = game.isDebugMode ? 0 : 2000;
+	var fastSpeed = game.isDebugMode ? 0 : 1000;
+
 	if(slideName == "p1"){
 		
 		this.fadeOutDiv(
 			"#intro-s1",
-			600
+			(game.isDebugMode ? 0 : 600)
 		).then(function(){
 			$("#intro-s2").show();
-			return self.revealText("#intro-s2-p1", 3000, 0); //3000, 0
+			return self.revealText("#intro-s2-p1", slowSpeed, 0); //3000, 0
 		}).then(function(){
-			return self.revealText("#intro-s2-p2", 3000, 1000); //3000, 1000
+			return self.revealText("#intro-s2-p2", slowSpeed, fastSpeed); //3000, 1000
 		}).then(function(){
 			$("#intro-s2-buttons").fadeIn(500); //500
 		});
@@ -1066,22 +1065,24 @@ Game.prototype.continueIntroFrom = function(slideName){
 		
 		this.fadeOutDiv(
 			"#intro-s2",
-			600
+			(game.isDebugMode ? 0 : 600)
 		).then(function(){
 			$("#intro-s3").show();
-			return self.revealText("#intro-s3-p1", 3000, 0); //3000, 0
+			return self.revealText("#intro-s3-p1", slowSpeed, 0); //3000, 0
 		}).then(function(){
-			return self.revealText("#intro-s3-p2", 3000, 1000); //3000, 1000
+			return self.revealText("#intro-s3-p2", slowSpeed, fastSpeed); //3000, 1000
 		}).then(function(){
-			return self.revealText("#intro-s3-p3", 1000, 2000); //1000, 2000
+			return self.revealText("#intro-s3-p3", fastSpeed, medSpeed); //1000, 2000
 		}).then(function(){
-			$("#intro-s3-buttons").fadeIn(500); //500
+			$("#intro-s3-buttons").fadeIn((game.isDebugMode ? 0 : 500)); //500
 		});
 
 	}
 }
 
-
+Game.prototype.getLeaderTextFor = function(phase) {
+	return this.leadersToChooseFrom[this.selectedLeaderIdx()].textStages[phase];
+}
 
 //This is just temporary stuff to stop JS errors
 Game.prototype.hideModal = function() {

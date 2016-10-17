@@ -115,6 +115,8 @@
 											<p class="intro-text-paragraph" data-bind="text: $data.name"></p>
 											<p class="intro-text-paragraph" data-bind="text: 'Age: ' + $data.age"></p>
 											<p class="intro-text-paragraph" data-bind="text: $data.bio"></p>
+											<p class="intro-text-paragraph" data-bind="text: $data.strengthDescription"></p>
+											<p class="intro-text-paragraph" data-bind="text: $data.weaknessDescription"></p>
 										</div>
 										<!-- /ko -->
 										<div class="clear"></div>
@@ -132,9 +134,7 @@
 								<div id="intro-s2-p1" class="hidden intro-text-paragraph">
 									Journal Entry 1
 								</div>
-								<div id="intro-s2-p2" class="hidden intro-text-paragraph">
-									I'm going to try and keep a journal of events. Maybe it will be useful for someone, someday. Feels good to be writing something down, like I can still do something that matters. I don't know if any of us will make it out of this, but I think we have to try.
-								</div>
+								<div id="intro-s2-p2" class="hidden intro-text-paragraph" data-bind="text: function() { return getLeaderTextFor('p2'); }"></div>
 								<div id="intro-s2-buttons" class="hidden intro-buttons">
 									<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('p2'); }">Continue</button>
 									<div class="clear"></div>
@@ -148,7 +148,7 @@
 									Journal Entry 2
 								</div>
 								<div id="intro-s3-p2" class="hidden intro-text-paragraph">
-									We've decided to go to this place I remembered reading about one time. I sketched out a quick map for everyone. It looked like:
+									(FIX WORDING) We've decided to go to this place I remembered reading about one time. I sketched out a quick map for everyone. It looked like:
 								</div>
 								<div class="new-game-map-container hidden" id="intro-s3-p3">
 									<!-- ko foreach: newGameGeneratedMaps -->
