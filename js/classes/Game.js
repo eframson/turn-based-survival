@@ -7,7 +7,12 @@ var Game = function(data) {
 Game.prototype.init = function(data){
 
 	var self = this;
-	data = data || {};
+
+	var startingNewGame = false;
+	if(data == undefined || data == {}){
+		startingNewGame = true;
+		data = {};
+	}
 
 	//Static properties
 	this.seasons = [
@@ -19,20 +24,20 @@ Game.prototype.init = function(data){
 
 	//Regular properties
 	this.timer;
-	this.hourCounter = 1;
-	this.dayCounter = 1;	
-	this.seasonCounter = 0;
-	this.yearCounter = 1;
-	this.currentHour = 1;
-	this.currentDay = 1;
+	this.hourCounter = data.hourCounter || 1;
+	this.dayCounter = data.dayCounter || 1;
+	this.seasonCounter = data.seasonCounter || 0;
+	this.yearCounter = data.yearCounter || 1;
+	this.currentHour = data.currentHour || 1;
+	this.currentDay = data.currentDay || 1;
 	this.currentSeason = this.seasons[this.seasonCounter % 4];
-	this.isPlaying = 0;
-	this.timerInterval = 1000;
-	this.isPopupVisible = 0;
-	this.hourlyEvents = {};
-	this.dailyEvents = {};
-	this.seasonalEvents = {};
-	this.yearlyEvents = {};
+	this.isPlaying = data.isPlaying || 0;
+	this.timerInterval = data.timerInterval || 1000;
+	this.isPopupVisible = data.isPopupVisible || 0;
+	this.hourlyEvents = data.hourlyEvents || {};
+	this.dailyEvents = data.dailyEvents || {};
+	this.seasonalEvents = data.seasonalEvents || {};
+	this.yearlyEvents = data.yearlyEvents || {};
 	this.dailyMealsDesired = data.dailyMealsDesired || 0;
 	this.dailyMealsServed = data.dailyMealsServed || 0;
 	this.lowFoodDaysCount = data.lowFoodDaysCount || 0;
@@ -42,6 +47,9 @@ Game.prototype.init = function(data){
 	this.scheduledAdultAgingEvents = data.scheduledAdultAgingEvents || { 9 : 1, 12 : 1, 16 : 1 };
 	this.scheduledDeathEvents = data.scheduledAgingEvents || { 22 : 1 };
 	this.isDebugMode = 0;
+	this.introCompleted = data.introCompleted || 0;
+	this.wordForSettlersSingle = data.wordForSettlersSingle || 0;
+	this.wordForSettlersPlural = data.wordForSettlersPlural || 0;
 
 	//Observables
 	this.availableSettlers = ko.observable( $Utils.setDefaultValue(data.availableSettlers, 5) );
@@ -51,12 +59,17 @@ Game.prototype.init = function(data){
 	this.adultSettlers = ko.observable( $Utils.setDefaultValue(data.adultSettlers, 1) );
 	this.oldSettlers = ko.observable( $Utils.setDefaultValue(data.oldSettlers, 1) );
 	this.resources = ko.observable(data.resources || this._getDefaultResources());
-	this.playSpeed = ko.observable(1);
-	this.mapArray = ko.observable([]);
+	this.playSpeed = ko.observable( data.playspeed || 1);
 	this.newGameGeneratedMaps = ko.observableArray([]);
 	this.selectedMapIdx = ko.observable();
 	this.leadersToChooseFrom = ko.observableArray([]);
-	this.selectedLeaderIdx = ko.observable();
+	this.selectedLeaderIdx = ko.observable( data.selectedLeaderIdx || -1);
+
+	this.gameMap = ko.observable(0);
+	if(data.gameMap){
+		this.gameMap(new GameMap(data.gameMap));
+	}
+	
 
 	//Computed
 	this.totalSettlers = ko.computed(function(){
@@ -70,7 +83,9 @@ Game.prototype.init = function(data){
 	document.getElementById("current-season").innerHTML = this.currentSeason;
 	document.getElementById("current-year").innerHTML = this.yearCounter;
 
-	this._setupDefaultTimeEvents();
+	if(startingNewGame){
+		this._setupDefaultTimeEvents();
+	}
 
 	//Set up leaders
 	this.leadersToChooseFrom([
@@ -78,13 +93,22 @@ Game.prototype.init = function(data){
 			id : 'torvald',
 			name : 'Torvald Magnusson',
 			age : 44,
-			bio : 'Until very recently, a much-beloved CEO of a Fortune 100 company. According to his husband, Torvald could "charm the spots off a leopard." '
+			bio : 'Until very recently, a much-beloved CEO of a Fortune 100 company. According to his husband, Torvald\'s silver tongue could "charm the spots off a leopard." '
 				+ 'There\'s usually less working and a lot more talking when he\'s around, but everybody sure has a good time.', // +2 recruitment, -1 construction
 			strengthDescription : '+2 Recruitment',
 			weaknessDescription : '-1 Construction',
 			textStages : {
-				p2 : "I'm going to try and keep a journal of events. Maybe it will be useful for someone, someday. Feels good to be writing something down, like I can still do something that matters. I don't know if any of us will make it out of this, but I think we have to try.",
-			}
+				s2 : "Well, this is something that Tony Robbins never talked about, that's for sure. I can make this work, though."
+					+ " Just have to adapt. Think of it as...drastically changing market conditions. Going to see how many people I can recruit for this new \"enterprise.\"",
+				s3 : "Alright, seems we've got a few new \"hires.\" One of them has some knowledge of local resources to boot. Now that's someone you want around! Her first task as head of the"
+					+ " newly formed Location Selection Department was to draw me up a map of the area from her memory. I've decided to \"incorporate\" us here:",
+				s4 : "It's taken several days of travel, but we've made it, I think! It's been a couple days since we encountered anyone else, at least, so I'm sure we're not in any immediate danger."
+					+ " We've got some basic shelter established, courtesy of one of the same woman who drew up the maps. Need to think about promoting her. Company morale is a little shaky right now,"
+					+ " so it would probably be safer to wait. Enough idle thought for now. If this enterprise is going to succeed, I'll need to start divying up tasks sooner than later. Time to show"
+					+ " these people why I make the big bucks. Oh...\"made\", I guess."
+			},
+			wordForSettlersSingle : "Employee",
+			wordForSettlersPlural : "Employees",
 		},
 		{
 			id : 'melody',
@@ -95,8 +119,15 @@ Game.prototype.init = function(data){
 			strengthDescription : '+1 Construction',
 			weaknessDescription : '',
 			textStages : {
-				p2 : "I'm going to try and keep a journal of events. Maybe it will be useful for someone, someday. Feels good to be writing something down, like I can still do something that matters. I don't know if any of us will make it out of this, but I think we have to try.",
-			}
+				s2 : "Well, this is certainly a turn of events. Seems what's done is done, though. No sense in crying over spilt milk. Nobody's stepped up to take the reins yet,"
+					+ " but someone's got to or ain't a one of us gonna make it. Will see how many of us I can get together. Need to move fast or there might not be anything left worth saving.",
+				s3 : "Found some people willing to make a go of it. Not so different than our ancestors, I suppose. It looks like I've got the most knowledge of the area, so it's"
+					+ " fallen to me to pick the best place to settle. Not sure I'm an expert, but I've got a few locations in mind. I think we should try here: ",
+				s4 : "Well, we made it. Looks just about like I remember, fortunately. The journey was...it's not something I want to talk about just yet. Just...just need to focus on surviving for now."
+					+ " Now more than ever these folks need hope, and I'll be damned if I'm not going to try. We have to try, we've just got to. Enough chit-chat, though, there's a lot of work to do."
+			},
+			wordForSettlersSingle : "Survivor",
+			wordForSettlersPlural : "Survivors",
 		},
 		{
 			id : 'philip',
@@ -107,8 +138,14 @@ Game.prototype.init = function(data){
 			strengthDescription : '+2 Research',
 			weaknessDescription : '-1 Recruitment',
 			textStages : {
-				p2 : "I'm going to try and keep a journal of events. Maybe it will be useful for someone, someday. Feels good to be writing something down, like I can still do something that matters. I don't know if any of us will make it out of this, but I think we have to try.",
-			}
+				s2 : "Implementing phase one of Neo-Feudal System. Must think of better name than that. Need to keep the laborers happy. Will report back on recruitment efforts.",
+				s3 : "Selection of ideal settling location is necessary. Essential in these first few days to establish position at top of new order. Located several maps of the area."
+					+ " Will tell the others we are settling here:",
+				s4 : "Journey completed. Site looks promising. Believe I have sucessfully established myself at top of new hierarchy while en route. This is good, it is essential to maintain control during"
+					+ " early stages. Rudimentary home base has been established. Time to start assigning jobs to individuals to ensure survival of tribe."
+			},
+			wordForSettlersSingle : "Subject",
+			wordForSettlersPlural : "Subjects",
 		},
 	]);
 }
@@ -1047,7 +1084,7 @@ Game.prototype.continueIntroFrom = function(slideName){
 	var medSpeed = game.isDebugMode ? 0 : 2000;
 	var fastSpeed = game.isDebugMode ? 0 : 1000;
 
-	if(slideName == "p1"){
+	if(slideName == "s1"){
 		
 		this.fadeOutDiv(
 			"#intro-s1",
@@ -1061,7 +1098,12 @@ Game.prototype.continueIntroFrom = function(slideName){
 			$("#intro-s2-buttons").fadeIn(500); //500
 		});
 
-	} else if(slideName == "p2"){
+	} else if(slideName == "s2"){
+
+		var leadersToChooseFrom = this.leadersToChooseFrom();
+		var selectedLeaderIdx = this.selectedLeaderIdx();
+		this.wordForSettlersSingle = leadersToChooseFrom[selectedLeaderIdx].wordForSettlersSingle;
+		this.wordForSettlersPlural = leadersToChooseFrom[selectedLeaderIdx].wordForSettlersPlural;
 		
 		this.fadeOutDiv(
 			"#intro-s2",
@@ -1077,11 +1119,49 @@ Game.prototype.continueIntroFrom = function(slideName){
 			$("#intro-s3-buttons").fadeIn((game.isDebugMode ? 0 : 500)); //500
 		});
 
+	} else if(slideName == "s3"){
+		
+		this.fadeOutDiv(
+			"#intro-s3",
+			(game.isDebugMode ? 0 : 600)
+		).then(function(){
+			self.gameMap(new GameMap( { cellArray : self.newGameGeneratedMaps()[self.selectedMapIdx()] } ));
+			$("#game-time-stats").show();
+			$("#intro-s4").show();
+			return self.revealText("#intro-s4-p1", slowSpeed, 0); //3000, 0
+		}).then(function(){
+			return self.revealText("#intro-s4-p2", slowSpeed, fastSpeed); //3000, 1000
+		}).then(function(){
+			$("#intro-s4-buttons").fadeIn((game.isDebugMode ? 0 : 500)); //500
+		});
+
+	} else if(slideName == "s4"){
+		
+		this.fadeOutDiv(
+			"#intro-s4",
+			(game.isDebugMode ? 0 : 600)
+		).then(function(){
+			$("#onecol-row").hide();
+			$("#twocol-row").show();
+			return self.revealText("#twocol-left", slowSpeed, 0); //3000, 0
+		}).then(function(){
+			return self.revealText("#twocol-right", slowSpeed, fastSpeed); //3000, 1000
+		}).then(function(){
+			self.introCompleted = 1;
+			self.spcAction();
+		});
+
 	}
 }
 
 Game.prototype.getLeaderTextFor = function(phase) {
-	return this.leadersToChooseFrom[this.selectedLeaderIdx()].textStages[phase];
+	var leadersToChooseFrom = this.leadersToChooseFrom();
+	var selectedLeaderIdx = this.selectedLeaderIdx();
+	if(selectedLeaderIdx > -1){
+		return leadersToChooseFrom[selectedLeaderIdx].textStages[phase];
+	}else{
+		return "";
+	}
 }
 
 //This is just temporary stuff to stop JS errors

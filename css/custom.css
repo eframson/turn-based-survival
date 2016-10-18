@@ -59,36 +59,55 @@ button:focus {
 
 /* End general styles */
 /* Header styles */
-.header-area .game-stat-row .stat-label, .header-area .game-stat-row .stat-value {
-  width: 40px;
-  text-align: left; }
-.header-area .game-stat-row .stat-label {
-  font-weight: bold; }
-.header-area .game-stat-row .stat-value {
-  margin-left: 5px; }
-.header-area .title-row button {
-  margin-top: 20px; }
-.header-area .title-row .faq-notice {
-  margin-top: 30px; }
-.header-area .title-row .saved-notice {
-  display: block;
-  margin-top: 22px;
-  text-align: right;
-  font-weight: bold;
-  color: #5cb85c; }
+.header-area {
+  margin-bottom: 10px; }
+  .header-area .game-stat-row .stat-label, .header-area .game-stat-row .stat-value {
+    width: 40px;
+    text-align: left; }
+  .header-area .game-stat-row .stat-label {
+    font-weight: bold; }
+  .header-area .game-stat-row .stat-value {
+    margin-left: 5px; }
+  .header-area .title-row button {
+    margin-top: 20px; }
+  .header-area .title-row .faq-notice {
+    margin-top: 30px; }
+  .header-area .title-row .saved-notice {
+    display: block;
+    margin-top: 22px;
+    text-align: right;
+    font-weight: bold;
+    color: #5cb85c; }
 
 /* End header styles */
 /* Body styles */
-.body-area .loading {
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  border: 0.25rem solid rgba(1, 96, 0, 0.2);
-  border-top-color: #016000;
-  animation: spin 1s infinite linear;
-  margin: auto; }
-.body-area .onecol-row #fullscreen-content {
+.body-area {
   min-height: 400px; }
+  .body-area .loading {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    border: 0.25rem solid rgba(1, 96, 0, 0.2);
+    border-top-color: #016000;
+    animation: spin 1s infinite linear;
+    margin: auto; }
+  .body-area .map-row {
+    margin: 0; }
+    .body-area .map-row .map-cell {
+      float: left;
+      margin: 0; }
+      .body-area .map-row .map-cell.sm {
+        width: 2px;
+        height: 2px; }
+      .body-area .map-row .map-cell.md {
+        width: 4px;
+        height: 4px; }
+      .body-area .map-row .map-cell.lg {
+        width: 8px;
+        height: 8px; }
+      .body-area .map-row .map-cell.xlg {
+        width: 9px;
+        height: 9px; }
   .body-area .onecol-row #fullscreen-content .newgame-content .buttons {
     width: 205px;
     margin: auto; }
@@ -103,6 +122,10 @@ button:focus {
   .body-area .onecol-row #fullscreen-content .intro-content #intro-s1-buttons,
   .body-area .onecol-row #fullscreen-content .intro-content #intro-s2-buttons {
     margin-top: 10px; }
+  .body-area .onecol-row #fullscreen-content .intro-content #intro-s4-buttons {
+    width: 70px;
+    margin-left: auto;
+    margin-right: auto; }
   .body-area .onecol-row #fullscreen-content .intro-content .leader {
     float: left;
     width: 200px;
@@ -134,22 +157,11 @@ button:focus {
       cursor: pointer; }
     .body-area .onecol-row #fullscreen-content .intro-content .map-rendering.selected {
       border: 10px #016000 solid; }
-    .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row {
-      margin: 0; }
-      .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row .map-cell {
-        float: left;
-        margin: 0; }
-        .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row .map-cell.sm {
-          width: 2px;
-          height: 2px; }
-        .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row .map-cell.md {
-          width: 4px;
-          height: 4px; }
-        .body-area .onecol-row #fullscreen-content .intro-content .map-rendering .map-row .map-cell.lg {
-          width: 8px;
-          height: 8px; }
-.body-area .threecol-row {
-  min-height: 200px; }
+  .body-area .twocol-row .map-row .map-cell:hover {
+    opacity: 0.7;
+    cursor: pointer; }
+  .body-area .threecol-row {
+    min-height: 200px; }
 
 /* End body styles */
 /* Footer styles */

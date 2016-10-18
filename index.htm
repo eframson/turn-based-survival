@@ -57,9 +57,13 @@
 				<!-- end title + load/save -->
 
 				<!-- start stat row header row -->
-				<div class="row game-stat-row hidden">
+				<div class="row game-stat-row hidden" id="game-time-stats">
 
-					<div class="col-sm-6"></div>
+					<div class="col-sm-1"><span class="stat-label" data-bind="text: (gameMap() ? wordForSettlersPlural + ':' : '')"></span></div>
+					<div class="col-sm-1"><span class="stat-label">Available</span><span class="stat-value" data-bind="text: availableSettlers()"></span></div>
+					<div class="col-sm-1"><span class="stat-label">Working</span><span class="stat-value" data-bind="text: workingSettlers()"></span></div>
+					<div class="col-sm-1"><span class="stat-label">Total</span><span class="stat-value" data-bind="text: totalSettlers()"></span></div>
+					<div class="col-sm-2"></div>
 					<div class="col-sm-1"><span class="stat-label">Hour</span><span id="current-hour" class="stat-value"></span></div>
 					<div class="col-sm-1"><span class="stat-label">Day</span><span id="current-day" class="stat-value"></span></div>
 					<div class="col-sm-2"><span class="stat-label">Season</span><span id="current-season" class="stat-value"></span></div>
@@ -84,7 +88,7 @@
 			<div class="container">
 
 				<!-- start one-column row -->
-				<div class="onecol-row row hidden">
+				<div class="onecol-row row hidden" id="onecol-row">
 
 					<!-- spacer -->
 					<div class="col-sm-2"></div>
@@ -111,7 +115,7 @@
 									<p class="intro-text-paragraph strong">Choose your leader:</p>
 									<div class="leader-list">
 										<!-- ko foreach: leadersToChooseFrom -->
-										<div class="leader" data-bind="css: { selected : $index == $root.selectedLeaderIdx() }, click: function(){ $root.selectedLeaderIdx($index); }">
+										<div class="leader" data-bind="css: { selected : $index() == $root.selectedLeaderIdx() }, click: function() { $root.selectedLeaderIdx($index()); }">
 											<p class="intro-text-paragraph" data-bind="text: $data.name"></p>
 											<p class="intro-text-paragraph" data-bind="text: 'Age: ' + $data.age"></p>
 											<p class="intro-text-paragraph" data-bind="text: $data.bio"></p>
@@ -123,7 +127,7 @@
 									</div>
 								</div>
 								<div id="intro-s1-buttons" class="hidden intro-buttons">
-									<button type="button" class="btn btn-md btn-default" data-bind="enable: selectedLeaderIdx() != undefined, click: function(){ continueIntroFrom('p1'); }">Continue</button>
+									<button type="button" class="btn btn-md btn-default" data-bind="enable: selectedLeaderIdx() != undefined, click: function(){ continueIntroFrom('s1'); }">Continue</button>
 									<div class="clear"></div>
 								</div>
 
@@ -134,9 +138,9 @@
 								<div id="intro-s2-p1" class="hidden intro-text-paragraph">
 									Journal Entry 1
 								</div>
-								<div id="intro-s2-p2" class="hidden intro-text-paragraph" data-bind="text: function() { return getLeaderTextFor('p2'); }"></div>
+								<div id="intro-s2-p2" class="hidden intro-text-paragraph" data-bind="html: getLeaderTextFor('s2')"></div>
 								<div id="intro-s2-buttons" class="hidden intro-buttons">
-									<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('p2'); }">Continue</button>
+									<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('s2'); }">Continue</button>
 									<div class="clear"></div>
 								</div>
 
@@ -147,12 +151,10 @@
 								<div id="intro-s3-p1" class="hidden intro-text-paragraph">
 									Journal Entry 2
 								</div>
-								<div id="intro-s3-p2" class="hidden intro-text-paragraph">
-									(FIX WORDING) We've decided to go to this place I remembered reading about one time. I sketched out a quick map for everyone. It looked like:
-								</div>
+								<div id="intro-s3-p2" class="hidden intro-text-paragraph" data-bind="html: getLeaderTextFor('s3')"></div>
 								<div class="new-game-map-container hidden" id="intro-s3-p3">
 									<!-- ko foreach: newGameGeneratedMaps -->
-									<div class="map-rendering" data-bind="css: { selected : $index == $root.selectedMapIdx() }, click: function(){ $root.selectedMapIdx($index); }">
+									<div class="map-rendering" data-bind="css: { selected : $index() == $root.selectedMapIdx() }, click: function(){ $root.selectedMapIdx($index()); }">
 										<!-- ko foreach: $data -->
 										<div class="map-row">
 											<!-- ko foreach: $data -->
@@ -165,11 +167,25 @@
 									<!-- /ko -->
 								</div>
 								<div id="intro-s3-buttons" class="hidden intro-buttons">
-									<button type="button" class="btn btn-md btn-default" data-bind="enable: selectedMapIdx() != undefined, click: function(){ continueIntroFrom('p3'); }">Continue</button>
+									<button type="button" class="btn btn-md btn-default" data-bind="enable: selectedMapIdx() != undefined, click: function(){ continueIntroFrom('s3'); }">Continue</button>
 									<div class="clear"></div>
 								</div>
 
 							</div>
+
+							<div class="intro-s4 hidden" id="intro-s4">
+
+								<div id="intro-s4-p1" class="hidden intro-text-paragraph">
+									Journal Entry 3
+								</div>
+								<div id="intro-s4-p2" class="hidden intro-text-paragraph" data-bind="html: getLeaderTextFor('s4')"></div>
+								<div id="intro-s4-buttons" class="hidden intro-buttons">
+									<button type="button" class="btn btn-md btn-default" data-bind="click: function(){ continueIntroFrom('s4'); }">Begin!</button>
+									<div class="clear"></div>
+								</div>
+
+							</div>
+
 						</div>
 						<!-- end intro sequence content -->
 
@@ -182,6 +198,217 @@
 
 				</div>
 				<!-- end one-column row -->
+
+				<!-- start two-column row -->
+				<div class="twocol-row row hidden" id="twocol-row">
+
+					<!-- start leftcol -->
+					<div class="col-sm-6 leftcol hidden" id="twocol-left">
+
+
+
+
+
+
+
+
+
+
+
+
+
+					<!--
+						<div class="panel-group" id="accordion">
+			                <div class="panel panel-default">
+			                    <div class="panel-heading">
+			                        <h4 class="panel-title">
+			                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"><span class="glyphicon glyphicon-folder-close">
+			                            </span>Content</a>
+			                        </h4>
+			                    </div>
+			                    <div id="collapseOne" class="panel-collapse collapse in">
+			                        <div class="panel-body">
+			                            <table class="table">
+			                                <tr>
+			                                    <td>
+			                                        <span class="glyphicon glyphicon-pencil text-primary"></span><a href="http://www.jquery2dotnet.com">Articles</a>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <span class="glyphicon glyphicon-flash text-success"></span><a href="http://www.jquery2dotnet.com">News</a>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <span class="glyphicon glyphicon-file text-info"></span><a href="http://www.jquery2dotnet.com">Newsletters</a>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <span class="glyphicon glyphicon-comment text-success"></span><a href="http://www.jquery2dotnet.com">Comments</a>
+			                                        <span class="badge">42</span>
+			                                    </td>
+			                                </tr>
+			                            </table>
+			                        </div>
+			                    </div>
+			                </div>
+			                <div class="panel panel-default">
+			                    <div class="panel-heading">
+			                        <h4 class="panel-title">
+			                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span class="glyphicon glyphicon-th">
+			                            </span>Modules</a>
+			                        </h4>
+			                    </div>
+			                    <div id="collapseTwo" class="panel-collapse collapse">
+			                        <div class="panel-body">
+			                            <table class="table">
+			                                <tr>
+			                                    <td>
+			                                        <a href="http://www.jquery2dotnet.com">Orders</a> <span class="label label-success">$ 320</span>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <a href="http://www.jquery2dotnet.com">Invoices</a>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <a href="http://www.jquery2dotnet.com">Shipments</a>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <a href="http://www.jquery2dotnet.com">Tex</a>
+			                                    </td>
+			                                </tr>
+			                            </table>
+			                        </div>
+			                    </div>
+			                </div>
+			                <div class="panel panel-default">
+			                    <div class="panel-heading">
+			                        <h4 class="panel-title">
+			                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"><span class="glyphicon glyphicon-user">
+			                            </span>Account</a>
+			                        </h4>
+			                    </div>
+			                    <div id="collapseThree" class="panel-collapse collapse">
+			                        <div class="panel-body">
+			                            <table class="table">
+			                                <tr>
+			                                    <td>
+			                                        <a href="http://www.jquery2dotnet.com">Change Password</a>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <a href="http://www.jquery2dotnet.com">Notifications</a> <span class="label label-info">5</span>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <a href="http://www.jquery2dotnet.com">Import/Export</a>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <span class="glyphicon glyphicon-trash text-danger"></span><a href="http://www.jquery2dotnet.com" class="text-danger">
+			                                            Delete Account</a>
+			                                    </td>
+			                                </tr>
+			                            </table>
+			                        </div>
+			                    </div>
+			                </div>
+			                <div class="panel panel-default">
+			                    <div class="panel-heading">
+			                        <h4 class="panel-title">
+			                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"><span class="glyphicon glyphicon-file">
+			                            </span>Reports</a>
+			                        </h4>
+			                    </div>
+			                    <div id="collapseFour" class="panel-collapse collapse">
+			                        <div class="panel-body">
+			                            <table class="table">
+			                                <tr>
+			                                    <td>
+			                                        <span class="glyphicon glyphicon-usd"></span><a href="http://www.jquery2dotnet.com">Sales</a>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <span class="glyphicon glyphicon-user"></span><a href="http://www.jquery2dotnet.com">Customers</a>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <span class="glyphicon glyphicon-tasks"></span><a href="http://www.jquery2dotnet.com">Products</a>
+			                                    </td>
+			                                </tr>
+			                                <tr>
+			                                    <td>
+			                                        <span class="glyphicon glyphicon-shopping-cart"></span><a href="http://www.jquery2dotnet.com">Shopping Cart</a>
+			                                    </td>
+			                                </tr>
+			                            </table>
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			            -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+						<!-- start leftcol-inner -->
+						<div class="leftcol-inner">
+
+						</div>
+						<!-- end leftcol-inner -->
+
+					</div>
+					<!-- end leftcol -->
+
+					<!-- start rightcol -->
+					<div class="col-sm-6 rightcol hidden" id="twocol-right">
+
+						<div class="rightcol-inner">
+						<!-- ko if: gameMap() -->
+
+							<div class="map-rendering">
+								<!-- ko foreach: gameMap().rows() -->
+								<div class="map-row">
+									<!-- ko foreach: $data -->
+										<div class="map-cell xlg" data-bind="style : {backgroundColor : $root._translateTerrainTypeIntoColor($data.mappedValue)}, attr : {'data-height' : $data.height} "></div>
+									<!-- /ko -->
+									<div class="clear"></div>
+								</div>
+								<!-- /ko -->
+							</div>
+
+						<!-- /ko -->
+						</div>
+
+					</div>
+					<!-- end rightcol -->
+
+				</div>
+				<!-- end two-column row -->
 
 				<!-- start three-column row -->
 				<div class="threecol-row row hidden">
@@ -326,7 +553,9 @@
 		
 		<!-- Classes -->
 		<script src="js/classes/Utils.js"></script>
+		<script src="js/classes/GameMap.js"></script>
 		<script src="js/classes/Game.js"></script>
+
 		<script src="js/classes/Person.js"></script>
 		<script src="js/classes/Settler.js"></script>
 

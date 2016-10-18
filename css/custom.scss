@@ -78,6 +78,8 @@ button:focus {
 /* Header styles */
 .header-area {
 
+	margin-bottom: 10px;
+
 	.game-stat-row {
 
 		.stat-label, .stat-value {
@@ -121,6 +123,8 @@ button:focus {
 /* Body styles */
 .body-area {
 
+	min-height: 400px;
+
 	.loading {
 	    border-radius: 50%;
 	    width: $loader-dimensions;
@@ -131,11 +135,42 @@ button:focus {
 	    margin: auto;
 	}
 
+	.map-row {
+
+		margin: 0;
+
+		.map-cell {
+			
+			float: left;
+			margin: 0;
+
+			&.sm {
+				width: 2px;
+				height: 2px;	
+			}
+
+			&.md {
+				width: 4px;
+				height: 4px;	
+			}
+
+			&.lg {
+				width: 8px;
+				height: 8px;	
+			}
+
+			&.xlg {
+				width: 9px;
+				height: 9px;	
+			}
+
+		}
+
+	}
+
 	.onecol-row {
 
 		#fullscreen-content {
-
-			min-height: 400px;
 
 			.newgame-content {
 
@@ -165,6 +200,12 @@ button:focus {
 				#intro-s1-buttons,
 				#intro-s2-buttons {
 					margin-top: 10px;
+				}
+
+				#intro-s4-buttons {
+					width: 70px;
+					margin-left: auto;
+					margin-right: auto;
 				}
 
 				.leader {
@@ -218,40 +259,27 @@ button:focus {
 						border: 10px #016000 solid;
 					}
 
-					.map-row {
-
-						margin: 0;
-
-						.map-cell {
-							
-							float: left;
-							margin: 0;
-
-							&.sm {
-								width: 2px;
-								height: 2px;	
-							}
-
-							&.md {
-								width: 4px;
-								height: 4px;	
-							}
-
-							&.lg {
-								width: 8px;
-								height: 8px;	
-							}
-
-						}
-
-					}
-
 				}
 
 			}
 
 		}
 
+	}
+
+	.twocol-row {
+		
+		.map-row {
+
+			.map-cell {
+
+				&:hover {
+					opacity: 0.7;
+					cursor: pointer;
+				}
+
+			}
+		}
 	}
 
 	.threecol-row {

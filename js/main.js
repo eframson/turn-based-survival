@@ -35,7 +35,7 @@ $(document).ready(function(){
 		this.blur();
 	});
 
-	$(".onecol-row").fadeIn(400);
+	$("#onecol-row").fadeIn(400);
 
 });
 
