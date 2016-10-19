@@ -31,6 +31,33 @@ $(document).ready(function(){
 		}
 	});
 
+	$('.collapse').collapse({
+		toggle: false,
+		parent: '#game-info-accordion'
+	});
+
+	$(document).on('click', '.panel-heading', function (e) {
+		var $this = $(this);
+		$this.siblings(".collapse").collapse('toggle');
+	});
+
+	$(document).on('mouseenter', '.panel-heading', function (e) {
+		var $this = $(this);
+		$this.addClass("hover");
+	});
+
+	$(document).on('mouseleave', '.panel-heading', function (e) {
+		var $this = $(this);
+		$this.removeClass("hover");
+	});
+
+	$(document).on('click', '#game-map .map-cell', function (e) {
+		var $this = $(this);
+		$('#game-map .map-cell.selected').removeClass('selected');
+		$this.addClass('selected');
+		$("#game-panel-cell-info .collapse").collapse("show");
+	});
+
 	$("button.btn").click(function(){
 		this.blur();
 	});
@@ -40,8 +67,3 @@ $(document).ready(function(){
 });
 
 //http://usejsdoc.org/about-getting-started.html
-
-/*
-- Simulate birth/death rates
-
-*/

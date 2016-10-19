@@ -63,7 +63,8 @@ Game.prototype.init = function(data){
 	this.newGameGeneratedMaps = ko.observableArray([]);
 	this.selectedMapIdx = ko.observable();
 	this.leadersToChooseFrom = ko.observableArray([]);
-	this.selectedLeaderIdx = ko.observable( data.selectedLeaderIdx || -1);
+	this.selectedLeaderIdx = ko.observable( $Utils.setDefaultValue(data.selectedLeaderIdx, -1));
+	this.currentlySelectedCell = ko.observable("");
 
 	this.gameMap = ko.observable(0);
 	if(data.gameMap){
@@ -951,14 +952,10 @@ Game.prototype._getMapArrayCoalescedAndTransformedIntoGivenParameters = function
 				newArray[h] = [];
 			}
 
-			newArray[h][w] = { mappedValue : newValue, height : heightVal };
+			newArray[h][w] = { mappedValue : newValue, height : heightVal, row : h, column : w, contains : "" };
 		}
 	}
 	return newArray;
-}
-
-Game.prototype.translateHeightsIntoTerrain = function(mapArray){
-
 }
 
 Game.prototype._getMinAndMaxHeights = function(mapArray){
@@ -991,6 +988,14 @@ Game.prototype._TESTLOGMAP = function(mapArray){
 	for (var h = 0; h < mapArray.length; h++) {
 		console.log(mapArray[h].join(" "));
 	}
+}
+
+Game.prototype.setActiveCell = function(cell, event){
+	this.currentlySelectedCell(cell);
+}
+
+Game.prototype.getDisplayedTerrainTypeForActiveCell = function(){
+	return this.currentlySelectedCell().mappedValue;
 }
 
 //End map functions
@@ -1063,7 +1068,7 @@ Game.prototype._getDefaultResources = function(){
 	};
 }
 
-Game.prototype._translateTerrainTypeIntoColor = function(terrainType){
+Game.prototype._translateTerrainTypeIntoColor = function(cell){
 
 	var mappedTerrainTypesToColors = {
 		"water" : "#0004E3", //blue
@@ -1073,7 +1078,19 @@ Game.prototype._translateTerrainTypeIntoColor = function(terrainType){
 		"mountain" : "#8C8C8C", //gray
 	};
 
-	return (mappedTerrainTypesToColors[terrainType] != undefined) ? mappedTerrainTypesToColors[terrainType] : "#ffffff" ;
+	var mappedContainsToColors = {
+		"hq" : "#F29057",
+	}
+
+	/*if(this.isDebugMode){
+		return "#FFFFFF";
+	}*/
+
+	if(cell.contains != ""){
+		return (mappedContainsToColors[cell.contains] != undefined) ? mappedContainsToColors[cell.contains] : "#ffffff" ;
+	}
+
+	return (mappedTerrainTypesToColors[cell.mappedValue] != undefined) ? mappedTerrainTypesToColors[cell.mappedValue] : "#ffffff" ;
 }
 
 Game.prototype.continueIntroFrom = function(slideName){
@@ -1125,7 +1142,10 @@ Game.prototype.continueIntroFrom = function(slideName){
 			"#intro-s3",
 			(game.isDebugMode ? 0 : 600)
 		).then(function(){
-			self.gameMap(new GameMap( { cellArray : self.newGameGeneratedMaps()[self.selectedMapIdx()] } ));
+			var gameMap = new GameMap( { cellArray : self.newGameGeneratedMaps()[self.selectedMapIdx()] } );
+			gameMap.chooseRandomStart();
+			self.gameMap(gameMap);
+			gameMap = undefined;
 			$("#game-time-stats").show();
 			$("#intro-s4").show();
 			return self.revealText("#intro-s4-p1", slowSpeed, 0); //3000, 0
@@ -1192,3 +1212,8 @@ Game.prototype.logMessages = function() {
 Game.prototype.showFaq = function() {
 	console.log('NOT IMPLEMENTED YET');
 }
+
+/*
+Lighten/darken map depending on time of day!!
+	-- Possibly could do it by adjusting opacity and putting the appropriate color background behind the map?
+*/

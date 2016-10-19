@@ -157,9 +157,20 @@ button:focus {
       cursor: pointer; }
     .body-area .onecol-row #fullscreen-content .intro-content .map-rendering.selected {
       border: 10px #016000 solid; }
-  .body-area .twocol-row .map-row .map-cell:hover {
-    opacity: 0.7;
+  .body-area .twocol-row #game-map {
     cursor: pointer; }
+    .body-area .twocol-row #game-map .map-row .map-cell:hover {
+      opacity: 0.6; }
+    .body-area .twocol-row #game-map .map-row .map-cell:active {
+      opacity: 0.3; }
+    .body-area .twocol-row #game-map .map-row .map-cell.selected {
+      opacity: 0.8; }
+  .body-area .twocol-row .panel-heading {
+    cursor: pointer; }
+    .body-area .twocol-row .panel-heading.hover {
+      background-color: #f9f9f9; }
+  .body-area .twocol-row .panel-body {
+    min-height: 380px; }
   .body-area .threecol-row {
     min-height: 200px; }
 
