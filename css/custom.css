@@ -6,6 +6,15 @@
     transform: rotate(0deg); }
   100% {
     transform: rotate(360deg); } }
+@keyframes blink {
+  0% {
+    opacity: 0.3; }
+  49% {
+    opacity: 0.3; }
+  50% {
+    opacity: 1.0; }
+  100% {
+    opacity: 1.0; } }
 /* End variable declaration area */
 /* General styles */
 button:focus {
@@ -164,13 +173,13 @@ button:focus {
     .body-area .twocol-row #game-map .map-row .map-cell:active {
       opacity: 0.3; }
     .body-area .twocol-row #game-map .map-row .map-cell.selected {
-      opacity: 0.8; }
+      animation: blink 1s linear infinite; }
   .body-area .twocol-row .panel-heading {
     cursor: pointer; }
     .body-area .twocol-row .panel-heading.hover {
       background-color: #f9f9f9; }
   .body-area .twocol-row .panel-body {
-    min-height: 380px; }
+    min-height: 280px; }
   .body-area .threecol-row {
     min-height: 200px; }
 

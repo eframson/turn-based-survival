@@ -14,6 +14,21 @@ $loader-color: #016000;
   }
 }
 
+@keyframes blink {
+	0% {
+		opacity: 0.3;
+	}
+	49% {
+		opacity: 0.3;
+	}
+	50% {
+		opacity: 1.0;
+	}
+	100% {
+		opacity: 1.0;
+	}
+}
+
 /* End variable declaration area */
 
 /* General styles */
@@ -286,7 +301,7 @@ button:focus {
 					}
 
 					&.selected{
-						opacity: 0.8;
+						animation: blink 1s linear infinite;
 					}
 
 				}
@@ -302,7 +317,7 @@ button:focus {
 		}
 
 		.panel-body {
-			min-height: 380px;
+			min-height: 280px;
 		}
 	}
 

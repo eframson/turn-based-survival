@@ -209,42 +209,41 @@
 
 						<div class="panel-group" id="game-info-accordion">
 			                <div class="panel panel-default game-panel" id="game-panel-settler-management">
-			                    <div class="panel-heading">
-			                        <h4 class="panel-title">
-			                            <a data-bind="text: gameMap() ? wordForSettlersSingle + ' Management' : ''"></a>
-			                        </h4>
-			                    </div>
+			                    <div class="panel-heading"><h4 class="panel-title" data-bind="text: gameMap() ? wordForSettlersSingle + ' Management' : ''"></h4></div>
 			                    <div class="panel-collapse collapse in">
 			                        <div class="panel-body">
-			                            Content here
+			                            <div class="settler-info-item">
+			                        		<div><span>Starvation Counter: </span><span data-bind="text: starvationMarkers "></span></div>
+			                        	</div>
 			                        </div>
 			                    </div>
 			                </div>
 			                <div class="panel panel-default game-panel" id="game-panel-supplies">
-			                    <div class="panel-heading">
-			                        <h4 class="panel-title">
-			                            <a>Supplies</a>
-			                        </h4>
-			                    </div>
+			                    <div class="panel-heading"><h4 class="panel-title">Supplies</h4></div>
 			                    <div class="panel-collapse collapse">
 			                        <div class="panel-body">
-			                            More content here
+			                        	<!-- ko with: resources -->
+			                            <div class="supplies-info-item">
+			                        		<div><span>Food: </span><span data-bind="text: $data.food "></span></div>
+			                        	</div>
+			                        	<!-- /ko -->
 			                        </div>
 			                    </div>
 			                </div>
 			                <div class="panel panel-default game-panel" id="game-panel-cell-info">
-			                    <div class="panel-heading">
-			                        <h4 class="panel-title">
-			                            <a>Map Square Info</a>
-			                        </h4>
-			                    </div>
+			                    <div class="panel-heading"><h4 class="panel-title">Map Square Info</h4></div>
 			                    <div class="panel-collapse collapse">
 			                        <div class="panel-body">
+
 			                        	<!-- ko if: currentlySelectedCell -->
-			                        	<div data-bind="with: currentlySelectedCell">
-			                        		<div><span>Terrain: </span><span data-bind="text: $root.getDisplayedTerrainTypeForActiveCell() "></span></div>
+			                        	<div class="map-square-info-item">
+			                        		<div><span>Terrain: </span><span data-bind="text: getDisplayedTerrainTypeForActiveCell() "></span></div>
+			                        	</div>
+			                        	<div class="map-square-info-item" data-bind="visible: currentlySelectedCell().improvement.type == undefined || currentlySelectedCell().improvement.type != 'hq'">
+			                        		<div><span>Distance from Base: </span><span data-bind="text: getDisplayedTimeFromBaseForActiveCell() "></span></div>
 			                        	</div>
 			                        	<!-- /ko -->
+			                        	
 			                        	<!-- ko if: currentlySelectedCell() == "" -->
 			                        	<div>No cell selected</div>
 			                        	<!-- /ko -->

@@ -41,7 +41,6 @@ Game.prototype.init = function(data){
 	this.dailyMealsDesired = data.dailyMealsDesired || 0;
 	this.dailyMealsServed = data.dailyMealsServed || 0;
 	this.lowFoodDaysCount = data.lowFoodDaysCount || 0;
-	this.starvationMarkers = data.starvationMarkers || 0;
 	this.isGameOver = data.isGameOver || 0;
 	this.scheduledChildAgingEvents = data.scheduledChildAgingEvents || { 7 : 1 };
 	this.scheduledAdultAgingEvents = data.scheduledAdultAgingEvents || { 9 : 1, 12 : 1, 16 : 1 };
@@ -65,6 +64,7 @@ Game.prototype.init = function(data){
 	this.leadersToChooseFrom = ko.observableArray([]);
 	this.selectedLeaderIdx = ko.observable( $Utils.setDefaultValue(data.selectedLeaderIdx, -1));
 	this.currentlySelectedCell = ko.observable("");
+	this.starvationMarkers = ko.observable(data.starvationMarkers || 0);
 
 	this.gameMap = ko.observable(0);
 	if(data.gameMap){
@@ -231,21 +231,23 @@ Game.prototype.processYearlyEvents = function(){
 }
 
 Game.prototype._doDailyStarvationCalculation = function(){
+	var starvationMarkers = this.starvationMarkers();
 	if( (this.dailyMealsServed / this.dailyMealsDesired) < 0.6){
-		this.starvationMarkers++;
-		if(this.starvationMarkers > 10){
-			this.starvationMarkers = 10;
+		starvationMarkers++;
+		if(starvationMarkers > 10){
+			starvationMarkers = 10;
 		}
-		console.log("Starvation markers: " + this.starvationMarkers);
+		console.log("Starvation markers: " + starvationMarkers);
 	}else{
-		this.starvationMarkers-=2;
-		if(this.starvationMarkers < 0){
-			this.starvationMarkers = 0;
+		starvationMarkers-=2;
+		if(starvationMarkers < 0){
+			starvationMarkers = 0;
 		}
-		console.log("Starvation markers: " + this.starvationMarkers);
+		console.log("Starvation markers: " + starvationMarkers);
 	}
+	this.starvationMarkers(starvationMarkers);
 
-	if(this.starvationMarkers > 3){
+	if(this.starvationMarkers() > 3){
 		this.processStarvationEvent();
 	}
 }
@@ -318,7 +320,7 @@ Game.prototype.killOldAdults = function(numOldAdults){
 
 Game.prototype.processStarvationEvent = function(){
 	var roll = $Utils.doRand(1, 11);
-	if(roll <= this.starvationMarkers){
+	if(roll <= this.starvationMarkers()){
 
 		if(this.availableSettlers() > 0){
 			this.availableSettlers( this.availableSettlers() - 1 );
@@ -739,7 +741,16 @@ Game.prototype.generateHeightMapUsingParticleDepositionAlgorithm = function(opti
 		(returnColorizedOrTerrainTypeMap == "terrain" ? "mountain" : "#8C8C8C" )
 	);
 
-	return mapArray;
+	var finalizedArray = _.map(mapArray, function(row){
+		return _.map(row, function(cell){
+			cell.improvement = {};
+			cell.terrain_type = cell.mappedValue;
+			delete cell.mappedValue;
+			return cell;
+		});
+	});
+
+	return finalizedArray;
 }
 
 Game.prototype._getLowestPointNeighbor = function(h, w, radius, mapHeight, mapWidth, mapArray){
@@ -952,7 +963,7 @@ Game.prototype._getMapArrayCoalescedAndTransformedIntoGivenParameters = function
 				newArray[h] = [];
 			}
 
-			newArray[h][w] = { mappedValue : newValue, height : heightVal, row : h, column : w, contains : "" };
+			newArray[h][w] = { mappedValue : newValue, height : heightVal, row : h, column : w };
 		}
 	}
 	return newArray;
@@ -995,7 +1006,11 @@ Game.prototype.setActiveCell = function(cell, event){
 }
 
 Game.prototype.getDisplayedTerrainTypeForActiveCell = function(){
-	return this.currentlySelectedCell().mappedValue;
+	return this.currentlySelectedCell().terrain_type;
+}
+
+Game.prototype.getDisplayedTimeFromBaseForActiveCell = function(){
+	return this.gameMap().distanceFromBase(this.currentlySelectedCell()) + " Hours";
 }
 
 //End map functions
@@ -1086,11 +1101,11 @@ Game.prototype._translateTerrainTypeIntoColor = function(cell){
 		return "#FFFFFF";
 	}*/
 
-	if(cell.contains != ""){
-		return (mappedContainsToColors[cell.contains] != undefined) ? mappedContainsToColors[cell.contains] : "#ffffff" ;
+	if(cell.improvement.type != undefined){
+		return (mappedContainsToColors[cell.improvement.type] != undefined) ? mappedContainsToColors[cell.improvement.type] : "#ffffff" ;
 	}
 
-	return (mappedTerrainTypesToColors[cell.mappedValue] != undefined) ? mappedTerrainTypesToColors[cell.mappedValue] : "#ffffff" ;
+	return (mappedTerrainTypesToColors[cell.terrain_type] != undefined) ? mappedTerrainTypesToColors[cell.terrain_type] : "#ffffff" ;
 }
 
 Game.prototype.continueIntroFrom = function(slideName){

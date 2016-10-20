@@ -38,13 +38,13 @@ GameMap.prototype.chooseRandomStart = function() {
 	}
 
 	var cell = this.chooseRandomCell();
-	while(cell.mappedValue != "grassland"){
+	while(cell.terrain_type != "grassland"){
 		cell = this.chooseRandomCell();
 	}
 	this.startRow = cell.row;
 	this.startCol = cell.column;
 
-	this.cellArray[this.startRow][this.startCol].contains = "hq";
+	this.cellArray[this.startRow][this.startCol].improvement = { type : "hq", level : 1, hp : 100 };
 
 	return this.rows();
 }
@@ -55,4 +55,11 @@ GameMap.prototype.chooseRandomCell = function() {
 	}
 
 	return this.cellArray[$Utils.doRand(0, this.height)][$Utils.doRand(0, this.width)];
+}
+
+GameMap.prototype.distanceFromBase = function(cell) {
+	var rowDiff = Math.abs(cell.row - this.startRow);
+	var colDiff = Math.abs(cell.column - this.startCol);
+
+	return Math.round((colDiff + rowDiff) / 2);
 }
