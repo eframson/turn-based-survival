@@ -180,6 +180,19 @@ button:focus {
       background-color: #f9f9f9; }
   .body-area .twocol-row .panel-body {
     min-height: 280px; }
+    .body-area .twocol-row .panel-body .settler-info-label {
+      font-weight: bold; }
+    .body-area .twocol-row .panel-body .settler-info-item {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -o-user-select: none;
+      user-select: none; }
+      .body-area .twocol-row .panel-body .settler-info-item .settler-job-control {
+        cursor: pointer; }
+        .body-area .twocol-row .panel-body .settler-info-item .settler-job-control.disabled {
+          cursor: auto;
+          opacity: 0.5; }
   .body-area .threecol-row {
     min-height: 200px; }
 

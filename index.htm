@@ -212,6 +212,15 @@
 			                    <div class="panel-heading"><h4 class="panel-title" data-bind="text: gameMap() ? wordForSettlersSingle + ' Management' : ''"></h4></div>
 			                    <div class="panel-collapse collapse in">
 			                        <div class="panel-body">
+			                        	<div class="settler-info-label">Assignments</div>
+			                        	<!-- ko foreach: settlerJobTypesArray -->
+			                        	<div class="settler-info-item">
+			                        		<span data-bind="text: $root.getDisplayedNameForSettlerJobType($data.job) + ': '"></span>
+			                        		<span class="glyphicon glyphicon-minus settler-job-control" data-bind="css: { disabled : $data.numSettlers == 0 }, click: function() { $root.removeSettlersFromJob($data); }"></span>
+			                        		<span data-bind="text: $data.numSettlers"></span>
+			                        		<span class="glyphicon glyphicon-plus settler-job-control" data-bind="css: { disabled : $root.availableSettlers() == 0 }, click: function() { $root.addSettlersToJob($data); }"></span>
+			                        	</div>
+			                        	<!-- /ko -->
 			                            <div class="settler-info-item">
 			                        		<div><span>Starvation Counter: </span><span data-bind="text: starvationMarkers "></span></div>
 			                        	</div>
@@ -225,6 +234,10 @@
 			                        	<!-- ko with: resources -->
 			                            <div class="supplies-info-item">
 			                        		<div><span>Food: </span><span data-bind="text: $data.food "></span></div>
+			                        		<div><span>Timber: </span><span data-bind="text: $data.timber "></span></div>
+			                        		<div><span>Stone: </span><span data-bind="text: $data.stone "></span></div>
+			                        		<div><span>Scrap Metal: </span><span data-bind="text: $data.scrap "></span></div>
+			                        		<div><span>Tools: </span><span data-bind="text: $data.tools "></span></div>
 			                        	</div>
 			                        	<!-- /ko -->
 			                        </div>
@@ -236,12 +249,25 @@
 			                        <div class="panel-body">
 
 			                        	<!-- ko if: currentlySelectedCell -->
-			                        	<div class="map-square-info-item">
-			                        		<div><span>Terrain: </span><span data-bind="text: getDisplayedTerrainTypeForActiveCell() "></span></div>
-			                        	</div>
-			                        	<div class="map-square-info-item" data-bind="visible: currentlySelectedCell().improvement.type == undefined || currentlySelectedCell().improvement.type != 'hq'">
-			                        		<div><span>Distance from Base: </span><span data-bind="text: getDisplayedTimeFromBaseForActiveCell() "></span></div>
-			                        	</div>
+				                        	<div class="map-square-info-item">
+				                        		<div><span>Terrain: </span><span data-bind="text: getDisplayedTerrainTypeForActiveCell() "></span></div>
+				                        	</div>
+
+				                        	<!-- ko if: (currentlySelectedCell().improvement_type == undefined || currentlySelectedCell().improvement_type != 'hq') -->
+					                        	<div class="map-square-info-item">
+					                        		<div><span>Distance from Base: </span><span data-bind="text: getDisplayedTimeFromBaseForActiveCell() "></span></div>
+					                        	</div>
+				                        	<!-- /ko -->
+
+				                        	<!-- ko if: (currentlySelectedCell().improvement_type != undefined && currentlySelectedCell().improvement_type == 'hq') -->
+					                        	<div class="map-square-info-item">
+					                        		<div><span>Starvation deaths: </span><span data-bind="text: starvationDeaths() "></span></div>
+					                        	</div>
+					                        	<div class="map-square-info-item">
+					                        		<div><span>Old age deaths: </span><span data-bind="text: oldAgeDeaths() "></span></div>
+					                        	</div>
+				                        	<!-- /ko -->
+
 			                        	<!-- /ko -->
 			                        	
 			                        	<!-- ko if: currentlySelectedCell() == "" -->

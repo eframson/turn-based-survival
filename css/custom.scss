@@ -318,6 +318,28 @@ button:focus {
 
 		.panel-body {
 			min-height: 280px;
+
+			.settler-info-label {
+				font-weight: bold;
+			}
+
+			.settler-info-item {
+
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				-o-user-select: none;
+				user-select: none;
+				
+				.settler-job-control {
+					cursor: pointer;
+
+					&.disabled {
+						cursor: auto;
+						opacity: 0.5;
+					}
+				}
+			}
 		}
 	}
 

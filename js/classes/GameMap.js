@@ -44,7 +44,9 @@ GameMap.prototype.chooseRandomStart = function() {
 	this.startRow = cell.row;
 	this.startCol = cell.column;
 
-	this.cellArray[this.startRow][this.startCol].improvement = { type : "hq", level : 1, hp : 100 };
+	this.cellArray[this.startRow][this.startCol].improvement_type = "hq";
+	this.cellArray[this.startRow][this.startCol].improvement_level = 1;
+	this.cellArray[this.startRow][this.startCol].improvement_hp = 100;
 
 	return this.rows();
 }
@@ -62,4 +64,36 @@ GameMap.prototype.distanceFromBase = function(cell) {
 	var colDiff = Math.abs(cell.column - this.startCol);
 
 	return Math.round((colDiff + rowDiff) / 2);
+}
+
+GameMap.prototype.updateCell = function(cellRow, cellCol, newData, clearUnusedKeys, addNewKeys){
+
+	clearUnusedKeys 	= $Utils.setDefaultValue(clearUnusedKeys, 0);
+	addNewKeys 			= $Utils.setDefaultValue(addNewKeys, 1);
+	var current 		= this.cellArray[cellRow][cellCol];
+	var missingProps	= [];
+
+	for (existingProp in current){
+		if( newData[existingProp] != undefined ){
+			current[existingProp] = newData[existingProp];
+			delete newData[existingProp];
+		}else{
+			missingProps.push(existingProp);
+		}
+	}
+
+	if(clearUnusedKeys){
+		$.each( missingProps, function(idx, missingProp){
+			delete current[missingProp];
+		});
+	}
+
+	if(addNewKeys){
+		for (newProp in newData){
+			current[newProp] = newData[newProp];
+		}
+	}
+
+	this.cellArray[cellRow][cellCol] = current;
+	return this.rows();
 }
