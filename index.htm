@@ -210,7 +210,7 @@
 						<div class="panel-group" id="game-info-accordion">
 			                <div class="panel panel-default game-panel" id="game-panel-settler-management">
 			                    <div class="panel-heading"><h4 class="panel-title" data-bind="text: gameMap() ? wordForSettlersSingle + ' Management' : ''"></h4></div>
-			                    <div class="panel-collapse collapse in">
+			                    <div class="panel-collapse collapse">
 			                        <div class="panel-body">
 			                        	<div class="settler-info-label">Assignments</div>
 			                        	<!-- ko foreach: settlerJobTypesArray -->
@@ -229,7 +229,7 @@
 			                </div>
 			                <div class="panel panel-default game-panel" id="game-panel-supplies">
 			                    <div class="panel-heading"><h4 class="panel-title">Supplies</h4></div>
-			                    <div class="panel-collapse collapse">
+			                    <div class="panel-collapse collapse in">
 			                        <div class="panel-body">
 			                        	<!-- ko with: resources -->
 			                            <div class="supplies-info-item">
