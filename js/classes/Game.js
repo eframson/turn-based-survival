@@ -68,10 +68,12 @@ Game.prototype.init = function(data){
 	this.starvationMarkers = ko.observable(data.starvationMarkers || 0);
 	this.oldAgeDeaths = ko.observable(data.oldAgeDeaths || 0);
 	this.starvationDeaths = ko.observable(data.starvationDeaths || 0);
+	this.gameMapRows = ko.observableArray([]).extend({notify: 'always'});
 
-	this.gameMap = ko.observable(0);
+	this.gameMap = ko.observable(0).extend({notify: 'always'});
 	if(data.gameMap){
 		this.gameMap(new GameMap(data.gameMap));
+		self.gameMapRows(self.gameMap().rows());
 	}
 	
 	//Computed
@@ -97,6 +99,12 @@ Game.prototype.init = function(data){
 		});
 		return jobs;
 	});
+	/*this.gameMapRows = ko.computed(function(){
+		if(self.gameMap && self.gameMap()){
+			return self.gameMap().rows();
+		}
+		return [];
+	});*/
 
 	//Init behavior
 	document.getElementById("current-hour").innerHTML = this.currentHour;
@@ -215,7 +223,7 @@ Game.prototype.processHourlyEvents = function(){
 		});
 	}
 
-	this.processSettlerWork();
+	//this.processSettlerWork();
 }
 
 Game.prototype.processDailyEvents = function(){
@@ -285,7 +293,22 @@ Game.prototype.consumeFoodEvent = function(){
 	console.log("Food leftover after serving: " + this.resources().food);
 }
 
-Game.prototype.processSettlerWork = function(){
+Game.prototype.buildFarm = function(){
+	var currentCell = this.currentlySelectedCell();
+	var newCellData = {
+		improvement_type : "farm",
+		construction_progress : 0,
+		construction_required : 40,
+	};
+	this.gameMap(this.gameMap().updateCell(currentCell.row, currentCell.column, newCellData));
+	var rows = this.gameMap().rows();
+	this.gameMapRows([]);
+	this.gameMapRows(rows);
+	this.buildingSquares.push($.extend(currentCell, newCellData));
+	this._updateActiveCell();
+}
+
+/*Game.prototype.processSettlerWork = function(){
 	var self = this;
 	var settlerJobs = this.settlerJobs();
 
@@ -299,7 +322,7 @@ Game.prototype.processSettlerWork = function(){
 
 		}
 	});
-}
+}*/
 
 Game.prototype.doChildAgingEventCheck = function(){
 	if( this.scheduledChildAgingEvents[this.seasonCounter] != undefined){
@@ -433,30 +456,42 @@ Game.prototype.processScavengingEvent = function(){
 
 Game.prototype.processConstructionEvent = function(){
 	var numSettlers = this.settlerJobs().builder;
-	if(this.buildingSquares.length > 0){
+	if(this.buildingSquares.length > 0 && numSettlers > 0){
 		var squareToBuild = this.buildingSquares[0];
-		squareToBuild.constructionProgress += numSettlers;
+		squareToBuild.construction_progress += numSettlers;
 
-		if(squareToBuild.constructionProgress >= squareToBuild.constructionRequired){
+		if(squareToBuild.construction_progress >= squareToBuild.construction_required){
 			//complete construction
 			this._completeConstruction(squareToBuild);
 			this.buildingSquares.shift();
 		}else{
 			this._updateConstructionProgress(squareToBuild);
 		}
+		var currentlySelectedCell = this.currentlySelectedCell();
+		if(squareToBuild.row == currentlySelectedCell.row && squareToBuild.column == currentlySelectedCell.column){
+			this._updateActiveCell();
+		}
 	}
 }
 
 Game.prototype._updateConstructionProgress = function(squareUnderConstruction){
-	var newCellData = { improvement_construction_progress : squareUnderConstruction.constructionProgress };
+	var newCellData = { construction_progress : squareUnderConstruction.construction_progress };
 	this.gameMap(this.gameMap().updateCell(squareUnderConstruction.row, squareUnderConstruction.column, newCellData));
 }
 
 Game.prototype._completeConstruction = function(completedSquare){
-	//this.gameMap(this.gameMap().updateCell(completedSquare.row, completedSquare.column, newData, clearUnusedKeys, addNewKeys));
+	var newCellData = { construction_progress : undefined, construction_required : 0, improvement_hp : 100, improvement_level : 1 };
+	this.gameMap(this.gameMap().updateCell(completedSquare.row, completedSquare.column, newCellData));
 }
 
 //End handle recurring events
+
+Game.prototype._updateActiveCell = function(){
+	var currentlySelectedCell = this.currentlySelectedCell();
+	if(currentlySelectedCell){
+		this.currentlySelectedCell(this.gameMap().getCell(currentlySelectedCell.row, currentlySelectedCell.column));
+	}
+}
 
 //Time logic
 
@@ -1237,12 +1272,15 @@ Game.prototype.newGame = function() {
 
 Game.prototype._setupDefaultTimeEvents = function(){
 	var self = this;
-	$.each( [7, 12, 18], function(idx, hour){
-		self.hourlyEvents[hour] = $Utils.pushOntoArray(self.hourlyEvents[hour], "consumeFoodEvent" )
+	_.forEach( [7, 12, 18], function(hour){
+		self.hourlyEvents[hour] = $Utils.pushOntoArray(self.hourlyEvents[hour], "consumeFoodEvent" );
 	});
-	$.each( [12, 18], function(idx, hour){
-		self.hourlyEvents[hour] = $Utils.pushOntoArray(self.hourlyEvents[hour], "processScavengingEvent" )
+	_.forEach( [12, 18], function(hour){
+		self.hourlyEvents[hour] = $Utils.pushOntoArray(self.hourlyEvents[hour], "processScavengingEvent" );
 	});
+	for(var i = 8; i < 18; i++){
+		self.hourlyEvents[i] = $Utils.pushOntoArray(self.hourlyEvents[i], "processConstructionEvent" );
+	}
 }
 
 Game.prototype._getDefaultResources = function(){
@@ -1267,6 +1305,7 @@ Game.prototype._translateTerrainTypeIntoColor = function(cell){
 
 	var mappedContainsToColors = {
 		"hq" : "#F29057",
+		"farm" : "#6d4127",
 	}
 
 	/*if(this.isDebugMode){
@@ -1332,6 +1371,7 @@ Game.prototype.continueIntroFrom = function(slideName){
 			var gameMap = new GameMap( { cellArray : self.newGameGeneratedMaps()[self.selectedMapIdx()] } );
 			gameMap.chooseRandomStart();
 			self.gameMap(gameMap);
+			self.gameMapRows(self.gameMap().rows());
 			gameMap = undefined;
 			$("#game-time-stats").show();
 			$("#intro-s4").show();

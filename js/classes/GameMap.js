@@ -28,7 +28,10 @@ GameMap.prototype.init = function(data) {
 	this.width = this.cellArray[0].length;
 }
 
-GameMap.prototype.rows = function() {
+GameMap.prototype.rows = function(rowNum) {
+	if(rowNum != undefined){
+		return this.cellArray[rowNum];
+	}
 	return this.cellArray;
 }
 
@@ -48,7 +51,7 @@ GameMap.prototype.chooseRandomStart = function() {
 	this.cellArray[this.startRow][this.startCol].improvement_level = 1;
 	this.cellArray[this.startRow][this.startCol].improvement_hp = 100;
 
-	return this.rows();
+	return this;
 }
 
 GameMap.prototype.chooseRandomCell = function() {
@@ -57,6 +60,10 @@ GameMap.prototype.chooseRandomCell = function() {
 	}
 
 	return this.cellArray[$Utils.doRand(0, this.height)][$Utils.doRand(0, this.width)];
+}
+
+GameMap.prototype.getCell = function(row, col) {
+	return this.cellArray[row][col];
 }
 
 GameMap.prototype.distanceFromBase = function(cell) {
@@ -95,5 +102,5 @@ GameMap.prototype.updateCell = function(cellRow, cellCol, newData, clearUnusedKe
 	}
 
 	this.cellArray[cellRow][cellCol] = current;
-	return this.rows();
+	return this;
 }

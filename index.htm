@@ -253,10 +253,26 @@
 				                        		<div><span>Terrain: </span><span data-bind="text: getDisplayedTerrainTypeForActiveCell() "></span></div>
 				                        	</div>
 
+				                        	<!-- ko if: currentlySelectedCell().improvement_type -->
+											<div class="map-square-info-item">
+				                        		<div><span>Improvement: </span><span data-bind="text: currentlySelectedCell().improvement_type "></span></div>
+				                        	</div>
+				                        	<!-- /ko -->
+
 				                        	<!-- ko if: (currentlySelectedCell().improvement_type == undefined || currentlySelectedCell().improvement_type != 'hq') -->
 					                        	<div class="map-square-info-item">
 					                        		<div><span>Distance from Base: </span><span data-bind="text: getDisplayedTimeFromBaseForActiveCell() "></span></div>
 					                        	</div>
+					                        	<!-- ko if: currentlySelectedCell().construction_required == undefined -->
+					                        	<div class="map-square-info-item">
+					                        		<div><button type="button" class="btn btn-sm btn-default build-button" data-bind="click: function() { buildFarm(); }">Build Farm</button></div>
+					                        	</div>
+					                        	<!-- /ko -->
+					                        	<!-- ko if: currentlySelectedCell().construction_required > 0 -->
+					                        	<div class="map-square-info-item">
+					                        		<div><span>Construction progress: </span><span data-bind="text: currentlySelectedCell().construction_progress + '/' + currentlySelectedCell().construction_required"></span></div>
+					                        	</div>
+					                        	<!-- /ko -->
 				                        	<!-- /ko -->
 
 				                        	<!-- ko if: (currentlySelectedCell().improvement_type != undefined && currentlySelectedCell().improvement_type == 'hq') -->
@@ -287,10 +303,10 @@
 						<!-- ko if: gameMap() -->
 
 							<div class="map-rendering" id="game-map">
-								<!-- ko foreach: gameMap().rows() -->
+								<!-- ko foreach: gameMapRows() -->
 								<div class="map-row">
 									<!-- ko foreach: $data -->
-										<div class="map-cell xlg" data-bind="style : {backgroundColor : $root._translateTerrainTypeIntoColor($data)}, attr : {'data-height' : $data.height}, click : function() { $root.setActiveCell($data) }"></div>
+										<div class="map-cell xlg" data-bind="style : {backgroundColor : $root._translateTerrainTypeIntoColor($data)}, attr : {'data-height' : $data.height}, click : function() { $root.setActiveCell($data) }, css : { construction : $data.construction_required > 0}"></div>
 									<!-- /ko -->
 									<div class="clear"></div>
 								</div>
@@ -440,8 +456,8 @@
 		<script src="js/lib/jquery-ui.min.js"></script>
 		<script src="js/lib/lodash.core.min.js"></script>
 		<script src="js/lib/bootstrap.min.js"></script>
-		<script src="js/lib/knockout-3.4.0.min.js"></script>
-		<!--<script src="js/lib/knockout-3.4.0.js"></script>-->
+		<!--<script src="js/lib/knockout-3.4.0.min.js"></script>-->
+		<script src="js/lib/knockout-3.4.0.js"></script>
 		<!-- Plugins -->
 		<script src="js/plugins/knockout-mapping-2.4.1.min.js"></script>
 		<script src="js/plugins/jquery.animateNumbers.js"></script>
