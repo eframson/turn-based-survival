@@ -23,6 +23,7 @@ $(document).ready(function(){
 
 	$(document).keydown(function(e){
 		if(e.keyCode == 32){ //Space bar
+			e.preventDefault();
 			game.spcAction();
 		} else if(e.keyCode == 107){ //Numpad +
 			game.plusAction();

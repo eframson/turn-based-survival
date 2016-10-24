@@ -175,7 +175,7 @@ button:focus {
     .body-area .twocol-row #game-map .map-row .map-cell.selected {
       animation: blink 1s linear infinite; }
     .body-area .twocol-row #game-map .map-row .map-cell.construction {
-      border: dashed 1px #dee06d;
+      border: dotted 1px #dee06d;
       box-sizing: border-box;
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box; }

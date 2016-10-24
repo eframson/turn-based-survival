@@ -217,8 +217,8 @@
 			                        	<div class="settler-info-item">
 			                        		<span data-bind="text: $root.getDisplayedNameForSettlerJobType($data.job) + ': '"></span>
 			                        		<span class="glyphicon glyphicon-minus settler-job-control" data-bind="css: { disabled : $data.numSettlers == 0 }, click: function() { $root.removeSettlersFromJob($data); }"></span>
-			                        		<span data-bind="text: $data.numSettlers"></span>
-			                        		<span class="glyphicon glyphicon-plus settler-job-control" data-bind="css: { disabled : $root.availableSettlers() == 0 }, click: function() { $root.addSettlersToJob($data); }"></span>
+			                        		<span data-bind="text: $data.numSettlers + ($data.maxSettlers != undefined ? '/' + maxSettlers : '')"></span>
+			                        		<span class="glyphicon glyphicon-plus settler-job-control" data-bind="css: { disabled : ($root.availableSettlers() == 0 || ($data.maxSettlers != undefined && $data.numSettlers == $data.maxSettlers) ) }, click: function() { $root.addSettlersToJob($data); }"></span>
 			                        	</div>
 			                        	<!-- /ko -->
 			                            <div class="settler-info-item">
@@ -255,7 +255,7 @@
 
 				                        	<!-- ko if: currentlySelectedCell().improvement_type -->
 											<div class="map-square-info-item">
-				                        		<div><span>Improvement: </span><span data-bind="text: currentlySelectedCell().improvement_type "></span></div>
+				                        		<div><span>Improvement: </span><span data-bind="text: currentlySelectedCell().improvement_type + (currentlySelectedCell().construction_required > 0 ? ' (under construction)' : '')"></span></div>
 				                        	</div>
 				                        	<!-- /ko -->
 
@@ -264,9 +264,11 @@
 					                        		<div><span>Distance from Base: </span><span data-bind="text: getDisplayedTimeFromBaseForActiveCell() "></span></div>
 					                        	</div>
 					                        	<!-- ko if: currentlySelectedCell().construction_required == undefined -->
-					                        	<div class="map-square-info-item">
-					                        		<div><button type="button" class="btn btn-sm btn-default build-button" data-bind="click: function() { buildFarm(); }">Build Farm</button></div>
-					                        	</div>
+					                        		<!-- ko if: currentlySelectedCell().terrain_type == "grassland" -->
+														<div class="map-square-info-item">
+															<div><button type="button" class="btn btn-sm btn-default build-button" data-bind="click: function() { buildFarm(); }">Build Farm</button></div>
+														</div>
+													<!-- /ko -->
 					                        	<!-- /ko -->
 					                        	<!-- ko if: currentlySelectedCell().construction_required > 0 -->
 					                        	<div class="map-square-info-item">
@@ -300,20 +302,9 @@
 					<!-- start rightcol -->
 					<div class="col-sm-6 rightcol hidden" id="twocol-right">
 
-						<!-- ko if: gameMap() -->
-
 							<div class="map-rendering" id="game-map">
-								<!-- ko foreach: gameMapRows() -->
-								<div class="map-row">
-									<!-- ko foreach: $data -->
-										<div class="map-cell xlg" data-bind="style : {backgroundColor : $root._translateTerrainTypeIntoColor($data)}, attr : {'data-height' : $data.height}, click : function() { $root.setActiveCell($data) }, css : { construction : $data.construction_required > 0}"></div>
-									<!-- /ko -->
-									<div class="clear"></div>
-								</div>
-								<!-- /ko -->
-							</div>
 
-						<!-- /ko -->
+							</div>
 
 					</div>
 					<!-- end rightcol -->
