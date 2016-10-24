@@ -340,6 +340,10 @@ Game.prototype.buildFarm = function(){
 	this._updateActiveCell();
 }
 
+Game.prototype.sufficientBuildingMaterialsFor = function(building_type){
+	console.log(building_type);
+}
+
 /*Game.prototype.processSettlerWork = function(){
 	var self = this;
 	var settlerJobs = this.settlerJobs();
@@ -487,10 +491,10 @@ Game.prototype.processScavengingEvent = function(){
 }
 
 Game.prototype.processConstructionEvent = function(){
-	var numSettlers = this.settlerJobs().builder;
-	if(this.buildingSquares.length > 0 && numSettlers > 0){
+	var numSettlersDoingJob = this.settlerJobs().builder;
+	if(this.buildingSquares.length > 0 && numSettlersDoingJob > 0){
 		var squareToBuild = this.buildingSquares[0];
-		squareToBuild.construction_progress += numSettlers;
+		squareToBuild.construction_progress += numSettlersDoingJob;
 
 		if(squareToBuild.construction_progress >= squareToBuild.construction_required){
 			//complete construction
@@ -503,6 +507,15 @@ Game.prototype.processConstructionEvent = function(){
 		if(squareToBuild.row == currentlySelectedCell.row && squareToBuild.column == currentlySelectedCell.column){
 			this._updateActiveCell();
 		}
+	}
+}
+
+Game.prototype.processFarmingEvent = function(){
+	var numSettlersDoingJob = this.settlerJobs().farmer;
+	if(this.settlerJobCapacities().farmer > 0 && numSettlersDoingJob > 0){
+		var foodToAdd = numSettlersDoingJob;
+		var existingFood = this.resources().food;
+		this._updateObservableProp(this.resources, {food : (existingFood + foodToAdd)});
 	}
 }
 
@@ -1200,7 +1213,10 @@ Game.prototype._TESTLOGMAP = function(mapArray){
 }
 
 Game.prototype.setActiveCell = function(row, column){
-	this.currentlySelectedCell(this.gameMap().getCell(row, column));
+	var mapCell = this.gameMap().getCell(row, column);
+	var hasSufficientMaterials = this.hasSufficientBuildingMaterialsForBuildingType(this.getBuildingTypeForCellTerrainType(mapCell.terrain_type));
+	var activeCell = $.extend(mapCell, { has_sufficient_building_materials : hasSufficientMaterials });
+	this.currentlySelectedCell(activeCell);
 }
 
 Game.prototype.getDisplayedTerrainTypeForActiveCell = function(){
@@ -1223,6 +1239,43 @@ Game.prototype.getResourceTypeForCellTerrainType = function(cell){
 	};
 
 	return resourcesByTerrainType[cell.terrain_type];
+}
+
+Game.prototype.getBuildingTypeForCellTerrainType = function(terrainType){
+	var buildingsByTerrainType = {
+		//"water" : "fish",
+		//"sand" : "sand",
+		"grassland" : "farm",
+		//"woods" : "lumber",
+		//"mountain" : "stone",
+	};
+	return buildingsByTerrainType[terrainType];
+}
+
+Game.prototype.hasSufficientBuildingMaterialsForBuildingType = function(buildingType){
+	if(buildingType == undefined){
+		return false;
+	}
+	var self = this;
+	var buildingMaterialRequirementsByBuildingType = {
+		farm : {
+			timber : 10,
+			stone : 10,
+			scrap : 2,
+			tools : 1,
+		}
+	};
+	var hasSufficientMaterials = true;
+
+	_.forEach(Object.keys(buildingMaterialRequirementsByBuildingType[buildingType]), function(materialType){
+		if(self.resources()[materialType] >= buildingMaterialRequirementsByBuildingType[buildingType][materialType]){
+			return true;
+		}else{
+			hasSufficientMaterials = false;
+			return false;
+		}
+	});
+	return hasSufficientMaterials;
 }
 
 //End map functions
@@ -1322,6 +1375,9 @@ Game.prototype._setupDefaultTimeEvents = function(){
 	});
 	for(var i = 8; i < 18; i++){
 		self.hourlyEvents[i] = $Utils.pushOntoArray(self.hourlyEvents[i], "processConstructionEvent" );
+	}
+	for(var i = 8; i < 18; i+=2){
+		self.hourlyEvents[i] = $Utils.pushOntoArray(self.hourlyEvents[i], "processFarmingEvent" );
 	}
 }
 

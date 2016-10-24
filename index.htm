@@ -266,7 +266,7 @@
 					                        	<!-- ko if: currentlySelectedCell().construction_required == undefined -->
 					                        		<!-- ko if: currentlySelectedCell().terrain_type == "grassland" -->
 														<div class="map-square-info-item">
-															<div><button type="button" class="btn btn-sm btn-default build-button" data-bind="click: function() { buildFarm(); }">Build Farm</button></div>
+															<div><button type="button" class="btn btn-sm btn-default build-button" data-bind="click: function() { buildFarm(); }, disable : currentlySelectedCell().has_sufficient_building_materials == 0">Build Farm</button></div>
 														</div>
 													<!-- /ko -->
 					                        	<!-- /ko -->
