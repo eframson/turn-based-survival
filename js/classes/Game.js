@@ -1253,14 +1253,7 @@ Game.prototype.hasSufficientBuildingMaterialsForBuildingType = function(building
 		return false;
 	}
 	var self = this;
-	var buildingMaterialRequirementsByBuildingType = {
-		farm : {
-			timber : 10,
-			stone : 10,
-			scrap : 2,
-			tools : 1,
-		}
-	};
+	var buildingMaterialRequirementsByBuildingType = this.getRequiredBuildingMaterials();
 	var hasSufficientMaterials = true;
 
 	_.forEach(Object.keys(buildingMaterialRequirementsByBuildingType[buildingType]), function(materialType){
@@ -1272,6 +1265,22 @@ Game.prototype.hasSufficientBuildingMaterialsForBuildingType = function(building
 		}
 	});
 	return hasSufficientMaterials;
+}
+
+Game.prototype.getRequiredBuildingMaterials = function(buildingType){
+	var buildingMaterialRequirementsByBuildingType = {
+		farm : {
+			timber : 10,
+			stone : 10,
+			scrap : 2,
+			tools : 1,
+		}
+	};
+
+	if(buildingType != undefined && buildingMaterialRequirementsByBuildingType[buildingType] != undefined){
+		return buildingMaterialRequirementsByBuildingType[buildingType];
+	}
+	return buildingMaterialRequirementsByBuildingType;
 }
 
 //End map functions
