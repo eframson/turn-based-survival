@@ -340,10 +340,6 @@ Game.prototype.buildFarm = function(){
 	this._updateActiveCell();
 }
 
-Game.prototype.sufficientBuildingMaterialsFor = function(building_type){
-	console.log(building_type);
-}
-
 /*Game.prototype.processSettlerWork = function(){
 	var self = this;
 	var settlerJobs = this.settlerJobs();
