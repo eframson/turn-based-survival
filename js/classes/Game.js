@@ -329,15 +329,25 @@ Game.prototype.consumeFoodEvent = function(){
 }
 
 Game.prototype.buildFarm = function(){
-	var currentCell = this.currentlySelectedCell();
-	var newCellData = {
-		improvement_type : "farm",
-		construction_progress : 0,
-		construction_required : 40,
-	};
-	this.gameMap(this.gameMap().updateCell(currentCell.row, currentCell.column, newCellData));
-	this.buildingSquares.push($.extend(currentCell, newCellData));
-	this._updateActiveCell();
+	var self = this;
+	if(this.hasSufficientBuildingMaterialsForBuildingType("farm")){
+		var requiredMaterials = this.getRequiredBuildingMaterials("farm");
+
+		_.forEach(requiredMaterials, function(materialCount, materialName){
+			self.resources()[materialName] = self.resources()[materialName] - materialCount;
+		});
+		self.resources( self.resources() );
+
+		var currentCell = this.currentlySelectedCell();
+		var newCellData = {
+			improvement_type : "farm",
+			construction_progress : 0,
+			construction_required : 40,
+		};
+		this.gameMap(this.gameMap().updateCell(currentCell.row, currentCell.column, newCellData));
+		this.buildingSquares.push($.extend(currentCell, newCellData));
+		this._updateActiveCell();
+	}
 }
 
 /*Game.prototype.processSettlerWork = function(){
