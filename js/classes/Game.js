@@ -50,6 +50,7 @@ Game.prototype.init = function(data){
 	this.wordForSettlersSingle = data.wordForSettlersSingle || 0;
 	this.wordForSettlersPlural = data.wordForSettlersPlural || 0;
 	this.buildingSquares = data.buildingSquares || [];
+	this.pausedPlaySpeed = data.playspeed || 1;
 
 	//Observables
 	this.availableSettlers = ko.observable( $Utils.setDefaultValue(data.availableSettlers, 5) );
@@ -577,9 +578,12 @@ Game.prototype.restartMainTimer = function() {
 Game.prototype.spcAction = function(){
 	if(!this.isPopupVisible){
 		if(this.isPlaying){
+			this.pausedPlaySpeed = this.playSpeed();
 			this.pauseMainTimer();
+			this.playSpeed("Paused");
 		}else if (!this.isGameOver){
 			this.startMainTimer();
+			this.playSpeed(this.pausedPlaySpeed);
 		}
 		this.isPlaying = !this.isPlaying;
 	}
@@ -589,10 +593,10 @@ Game.prototype.plusAction = function(){
 	if(this.playSpeed() == 4){
 		return;
 	}
-	this.playSpeed( this.playSpeed() + 1 );
-	this._setIntervalBasedOnPlaySpeedInteger();
 
 	if(this.isPlaying){
+		this.playSpeed( this.playSpeed() + 1 );
+		this._setIntervalBasedOnPlaySpeedInteger();
 		this.restartMainTimer();
 	}
 }
@@ -601,10 +605,10 @@ Game.prototype.minusAction = function(){
 	if(this.playSpeed() == 1){
 		return;
 	}
-	this.playSpeed( this.playSpeed() - 1 );
-	this._setIntervalBasedOnPlaySpeedInteger();
 
 	if(this.isPlaying){
+		this.playSpeed( this.playSpeed() - 1 );
+		this._setIntervalBasedOnPlaySpeedInteger();
 		this.restartMainTimer();
 	}
 }
